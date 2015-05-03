@@ -1,0 +1,14 @@
+Display "min.tiff" "framebuffer" "rgba"
+
+Projection "perspective"
+
+WorldBegin
+Translate 0 0 2
+Color [1 0 0]
+Surface "second"
+Sphere 1 -1 1 360
+Surface "first"
+Attribute "visibility" "trace" [1]
+Translate -2 0 1
+Sphere 0.75 -1 1 360
+WorldEnd
