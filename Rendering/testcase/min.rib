@@ -5,17 +5,19 @@ Projection "perspective"
 
 WorldBegin
 
+#lighting	
+LightSource "envlight" "test"
+#end lighting
+
 #environment
-AttributeBegin
-AreaLightSource "envlightshader" "myEnvLightSource"
-Geometry "envsphere"
-AttributeEnd
+#AttributeBegin
+#AreaLightSource "envlightshader" "myEnvLightSource"
+#Geometry "envsphere"
+#AttributeEnd
 
 Translate 0 0 2
-Color [1 0 0]
-Surface "second"
+Surface "plastic"
 Sphere 1 -1 1 360
-Surface "first"
 Attribute "visibility" "trace" [1]
 Translate -2 0 1
 Sphere 0.75 -1 1 360

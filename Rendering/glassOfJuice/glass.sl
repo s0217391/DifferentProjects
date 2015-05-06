@@ -24,6 +24,7 @@ surface glass()
 	color Cr = trace(P, R);
 	color Ct = trace(P, T);
 	
+	
 	color result = (Kr * Cr) + (Kt * Ct);
 	
 	Oi = 1;
