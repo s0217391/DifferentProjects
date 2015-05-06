@@ -1,0 +1,62 @@
+shader_obj 5.0 1 0
+envlight 24 2 13 6 9 0 2 2 0 2 14 1
+11 181
+rgb
+current
+!!anyspace!!
+/Users/pieterjanbartels/Documents/MSCAVEF/DifferentProjects/Rendering/testcase
+.:
+envlightshader.sl
+result.tx
+light
+
+$meta_1900
+$meta___PRMAN_RELEASE__1900
+2
+1
+0
+0
+24
+$meta___PRMAN_RELEASE__ 6 2 -1 9 3 0 0 0 0 0 0
+$meta___PRMAN_RELEASE_TAG__ 6 2 -1 10 3 0 0 0 0 0 0
+$S0 6 2 -1 0 3 0 0 0 0 0 0
+$S2 6 2 -1 1 3 0 0 0 0 0 0
+$S6 6 2 -1 2 3 0 0 0 0 0 0
+$srcDir 6 2 -1 3 3 0 0 0 0 0 0
+$includePath 6 2 -1 4 3 0 0 0 0 0 0
+$S7 6 2 -1 5 3 0 0 0 0 1 9
+$S8 6 2 -1 6 3 0 0 0 0 1 1
+$C0 4 2 -1 0 3 0 0 0 0 2 7
+$C1 4 2 -1 1 3 0 0 5 8 5 8
+$S10 6 2 -1 7 3 0 0 3 3 0 0
+$S11 6 2 -1 8 3 0 0 9 9 0 0
+texturename 6 5 -1 13 3 1 1 1 1 4 7
+intensity 4 5 -1 14 3 1 2 2 2 4 8
+$result_light 0 15 -1 0 3 0 0 0 0 0 0
+L 21 10 1 0 2 0 0 0 0 6 6
+Cl 3 10 0 0 2 0 0 8 8 0 0
+light 14 8 -1 0 2 1 15 0 0 2 9
+$Code0 9 8 -1 0 2 0 0 0 0 5 8
+$T0 11 4 -1 0 2 0 0 5 8 5 8
+$Cond0 10 11 -1 0 2 0 0 5 8 5 8
+$T1 3 4 0 0 2 0 0 7 7 8 8
+$T2 21 4 1 0 2 0 0 6 6 7 7
+22
+13 8 
+14 9 
+11 
+13 14 
+20 21 10 19 
+23 16 
+22 13 10 9 23 
+17 14 22 
+12 
+_assign 	2 0  5 5 0
+_assign 	2 2  5 5 0
+_enterproc 	1 4  5 5 1
+_lightingstart 	2 5  5 7 2
+_solar		4 7  5 7 2
+_negate 	2 11  5 8 3
+environment 	5 13  5 8 3
+_scale		3 18  5 8 3
+_enterproc 	1 21  5 5 1
