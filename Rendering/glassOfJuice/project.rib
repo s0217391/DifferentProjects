@@ -27,18 +27,6 @@ AttributeBegin
 AttributeEnd
 # Simple Table - END
 
-# TEST WALL - START
-AttributeBegin
-	Color [0 1 1]
-	Translate 0 -10 0
-	Scale 50 50 50
-	Patch "bilinear" "P" [ -1 0 -1
-						    1 0 -1
-						   -1 0  1
-						    1 0  1 ]
-AttributeEnd
-# TEST WALL - END
-
 # Glass of Juice - START
 AttributeBegin
 	Color [1 1 1]

@@ -2,7 +2,15 @@ Display "min.tiff" "framebuffer" "rgba"
 
 Projection "perspective"
 
+
 WorldBegin
+
+#environment
+AttributeBegin
+AreaLightSource "envlightshader" "myEnvLightSource"
+Geometry "envsphere"
+AttributeEnd
+
 Translate 0 0 2
 Color [1 0 0]
 Surface "second"
