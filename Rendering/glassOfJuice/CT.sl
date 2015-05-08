@@ -44,6 +44,6 @@ illuminance(P, Nn, PI/2) {
 cook = cook/PI;
 
 Oi = opacity;
-Ci = (Kd * Cs * diffuse(Nn) + Ks * specularColor * cook) * Oi;
+Ci = (Kd * Cs * diffuse(Nn) + Ks * specularColor * cook + Ka * ambient()) * Oi;
 
 }

@@ -4,19 +4,24 @@ Display "resultV1.tiff" "framebuffer" "rgba"
 
 Projection "perspective"
 
+PixelSamples 2 2
+#Rotate -90 1 0 0
+#Translate 0 3.25 -7.5
 WorldBegin
 
 # Making sure rays will be able to pass through the glass
-Attribute "trace" "int maxspeculardepth" [5]
+Attribute "trace" "int maxspeculardepth" [6]
 Attribute "visibility" "trace" [1]
-Attribute "visibility" "transmission" [1]
+Attribute "visibility" "transmission" [0]
 
 # Environment - START
 # For now this is the environment map slapped on a sphere
-#AttributeBegin
+AttributeBegin
 #	Surface "env"
-#	Sphere 100 -100 100 360
-#AttributeEnd
+	Color [0.568 0.1 0.3]
+	Orientation "inside"
+	Sphere 100 -100 100 360
+AttributeEnd
 # Environment - END
 
 
@@ -27,10 +32,13 @@ LightSource "shadowspot" "light2"
 			"intensity" [1000]
 			"string shadowname" [ "raytrace" ]
 			"coneangle" [3]
+			
+LightSource "ambientlight" "light1"
+			"intensity" [0.5]
 #Lighting - END
 
 # OBJECTS - START
-Translate 0 -5 7.5
+Translate 0 -3 4.5
 Rotate -90 1 0 0
 
 	
@@ -57,13 +65,14 @@ AttributeBegin
 	Color [1 1 1]
 	#Surface "plastic"
 	Surface "glass"
+		"float ior" [1.5]
 	# Hollow Part of Glass - outside
-	Cylinder 1 0.5 5 360 # CHECKED
+	Cylinder 1 0.565 5 360 # CHECKED
 	# Hollow Part of Glass - inside
 	# This is the inside radius!!
 	AttributeBegin
 	Orientation "inside"
-	Cylinder 0.87 1 5 360 # CHECKED
+	Cylinder 0.87 1.065 5 360 # CHECKED
 	AttributeEnd
 	
 	# Solid part of Glass (bottom)
@@ -71,11 +80,30 @@ AttributeBegin
 	# Bottom
 	AttributeBegin
 	Orientation "inside"
-	Disk 0.5 1 360 # CHECKED
+	Disk 0.5 0.935 360 # CHECKED
+	AttributeEnd
+	# Bottom Bevel
+	AttributeBegin
+	Translate 0 0 0.565
+	Torus 0.935 0.065 270 360 360 #CHECKED - outside
+	AttributeEnd
+	# Top
+	Disk 1 0.805 360 # this needs the radius of the inside!! # CHECKED
+	# Top Bevel
+	AttributeBegin
+	Translate 0 0 1.065
+	Orientation "inside"
+	Torus 0.805 0.065 270 360 360 #CHECKED - inside
 	AttributeEnd
 	
-	# Top
-	Disk 1 0.87 360 # this needs the radius of the inside!! # CHECKED
+	
+	
+	#Little pocket of air in the bottom
+	AttributeBegin
+	Translate 0 0 0.75
+	Orientation "inside"
+	Sphere 0.2 -1 1 360 #CHECKED
+	AttributeEnd
 	
 	# Edge of the glass. Needs outside and inside radius!!
 	Translate 0 0 5
@@ -87,12 +115,21 @@ AttributeEnd
 AttributeBegin
 	# Juice (container) - check volume shader shader or subsurface scattering in Ians book
 	Color [1 0.5 0]
-	#Cylinder 0.86 1 4 360 # this needs the radius of the inside!! CHECKED
+	Surface "plastic"
+	#Cylinder 0.86 1.075 4 360 # this needs the radius of the inside!! CHECKED
 	# Close off the juice 
 	AttributeBegin
 	Orientation "inside"
-	#Disk 1.01 0.86 360 # this needs the height of the juice (bottom) CHECKED
+	#Disk 1.01 0.795 360 # this needs the radius of the inside!! # CHECKED
 	AttributeEnd
+	
+	# Top Bevel
+	AttributeBegin
+	Translate 0 0 1.075
+	#Torus 0.795 0.065 270 360 360 #CHECKED - outside
+	AttributeEnd
+	
+	
 	#Disk 4 0.86 360 # this needs the height of the juice (top) CHECKED
 AttributeEnd
 # Juice - END
