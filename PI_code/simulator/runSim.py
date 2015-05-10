@@ -8,7 +8,7 @@ import cv
 def setup(dd):
 	sim = s.AgentSimulation()
 	preyBehav = a.runAwayBehaviour(distanceTrapped = -1.0, distanceDanger = dd)
-	rndmBehav = a.randomBehaviour()
+	rndmBehav = a.scriptedBehaviour("/home/i7674211/DifferentProjects/PI_code/simulator/behaviourGeneration/generatedBehaviour.py")
 	prey = a.Agent(maxVelocity = 1.0, drag = 1, behav = preyBehav)
 	hunter = a.Agent(behav = rndmBehav, startPos = np.array([-3, -3]))
 	sim.addAgent(prey)
@@ -31,7 +31,7 @@ def drawPositions(dd, positions = []):
 	for i in positions[1:]:
 		cv.Circle(blank, convertPosition(i), 5, (0, 0, 255), thickness = -1)
 	cv.ShowImage("sim", blank)
-	cv.WaitKey(0)
+	cv.WaitKey(40)
 
 def main(argv=None):
 	dd = 2

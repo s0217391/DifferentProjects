@@ -2,6 +2,7 @@
 import numpy as np
 import abc
 import random as r
+import imp
 
 class Agent:
 	'Class representing an agent'
@@ -70,6 +71,18 @@ class randomBehaviour(Behaviour):
 		res = np.array([r.random(), r.random()])
 		#print res
 		return res
+		
+class scriptedBehaviour(Behaviour):
+	def __init__(self, module):
+		self.scriptModule = imp.load_source("scriptedBehav", module)
+		
+	def compute(self, aself, agents):
+		other = 0
+		if aself.ID == agents[0].ID: other = 1
+		otherAgent = agents[other]
+		relativePos = otherAgent.pos - aself.pos
+		return self.scriptModule.compute(relativePos)
+	
 			
 		
 		

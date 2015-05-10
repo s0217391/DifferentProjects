@@ -2,7 +2,8 @@
 import random as r
 import operators as ops
 
-var = []
+var = ['prey[0]', 'prey[1]']
+resultvar = []
 
 def randomElementFromList(ellst):
 	if(len(ellst) == 0):
@@ -11,26 +12,28 @@ def randomElementFromList(ellst):
 	return ellst[ind]
 
 def getNewVar():
-	tempNb = len(var)
+	tempNb = len(resultvar)
 	newvar = 'temp' + str(tempNb)
 	var.append(newvar)
+	resultvar.append(newvar)
 	return newvar
 
 def selectResultVar():
-	if len(var) <= 1:
+	if len(resultvar) <= 1:
 		return getNewVar()
 	else:
-		selector = r.randint(0, len(var))
-		if selector == len(var):
+		selector = r.randint(0, len(resultvar))
+		if selector == len(resultvar):
 			return getNewVar()
 		else:
-			return var[selector]
+			return resultvar[selector]
 			
 def getOperand(ellst):
 	if len(ellst) == 0:
 		return r.randint(0, 100) * r.random()
 	else:
-		if r.random() < 0.2:
+		# right now set so it never uses a number
+		if r.random() < -1.0:
 			return r.randint(0, 100) * r.random()
 		else:
 			return randomElementFromList(var)
@@ -48,5 +51,7 @@ def generateCodeBlock(maxlns = 10, seed = 0, minlns = 1):
 	result = []
 	for i in range(lines):
 		result = result + buildSimpleExpression()
-	result.append("print " + var[len(var) - 1])
+	x = getOperand(var)
+	y = getOperand(var)
+	result.append("return np.array([" + x + ", " + y + "])")
 	return result
