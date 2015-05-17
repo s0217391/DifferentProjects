@@ -1,0 +1,18 @@
+
+\ifx\isEmbedded\undefined
+\input{../format/format-setup}
+\graphicspath{{../img/}}
+\begin{document}
+%\maketitle
+\fi
+
+\section{Discussion} \label{sec_discussion}
+
+\ifx\isEmbedded\undefined
+% References
+\addcontentsline{toc}{section}{References}
+\bibliographystyle{../ref/harvardnat}
+\bibliography{../ref/master}
+\pagebreak
+\end{document}
+\fi

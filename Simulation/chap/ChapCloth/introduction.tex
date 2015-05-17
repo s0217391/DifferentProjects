@@ -1,0 +1,24 @@
+
+\ifx\isEmbedded\undefined
+\input{../format/format-setup}
+\graphicspath{{../img/}}
+\begin{document}
+%\maketitle
+\fi
+
+\section{Introduction}
+
+Cloth is ubiquitous in human life. Not only do we as humans (usually) wear garments, realistic environments also require curtains, flags, ... This implies that, if one wants to make a realistic virtual human environment, cloth should be included. This raises the question of what algorithms can be used to simulate cloth and its movement with a computer.\\
+
+This question has been a topic of a lot of research in the past decades, and the author has been looking into this question himself. After researching existing algorithms, he attempted implementing some himself. This report will give an overview of the implemented techniques, going over the implemented cloth model, the integration techniques, collision detection algorithms and the tearing algorithm. The latter will include a description of novel version of the half-edge structure to allow for efficient altering the structure of the cloth. The report will also give some insight into the actual implementation.\\
+
+This report borrows heavily from the first report: it will go over the same issues in the same order and highlight what parts of it the student has actually implemented. As a result, some of the introductory statements and equations are similar. However, the real issue of this report is the practical implementation, and this report is complemented by the code for the project, which is referenced several times. Furthermore, it is accompanied by a video that demonstrates the software's usage.\\
+
+\ifx\isEmbedded\undefined
+% References
+\addcontentsline{toc}{section}{References}
+\bibliographystyle{../ref/harvardnat}
+\bibliography{../ref/master}
+\pagebreak
+\end{document}
+\fi

@@ -1,0 +1,71 @@
+\ifx\isEmbedded\undefined
+\input{../format/format-setup}
+\graphicspath{{../img/}}
+\begin{document}
+\tableofcontents
+\pagebreak
+\input{../format/abbreviations}
+\fi
+
+\section{Special Cases}\label{sec_specialcases}
+While the simulation of granular media on its own is an interesting topic, things truly get interesting when it is coupled with other types of simulations. Coupling with rigid body simulations is usually covered when a new technique for granular media is introduced, and was covered in section REF, but coupling with other types of simulation is less common. 
+
+To broaden the scope of this report this section looks at coupling of granular material with fluid simulations. Important here is the changes the fluid causes to the granular media: water turns dry sand into mud. this is the subject of subsection \ref{sec_ld}.
+
+Furthermore this section also looks briefly at a very recent technique that is focused on one particular type of granular material: snow. Snow has some special properties, and a new technique incorporating these properties was developed for Disney’s frozen REF. This technique and the aforementioned properties are described in subsection \ref{sec_mpm}.
+
+\subsection{Interaction with water} \label{sec_ld}
+
+The difference between wet and dry granular materials has been mentioned before REFSEC. Adding water to dry sand changes it: the fluid flows into the sand, and the mixing turns the sand into mud, which has different properties than dry sand LADREF. Obviously, the behaviour of the sand also influences the way the water behaves. Hence, a two-way coupling is necessary.\\
+
+There are not a lot of authors that have addressed this problem. One interesting example however is the work of Lenaerts and Dutr\'e REF. To simulate this phenomenon they use SPH for both sand and water. The SPH method for sand has been explained in section SECREF. Lenaerts uses the plastic yielding from ZABREF.\\
+
+In order to achieve the two-way coupling they look at the granular material as a porous material, with the holes between grains the pore space. They use the porous particles of LAD08 to simulate the porous flow. A full description of this technique is out of scope for this report. The saturation of the pores is used to alter the cohesion constant in the plastic yield function as mixing a fluid in the granular material makes it into a more rigid structure. The cohesion is determined by interpolation between a lower cohesion constant for dry material $c_{dry}$ and a higher one $c_{wet}$ for wet material, based on the saturation $S$ of the pores:
+\begin{equation}
+c =
+\left\{
+	\begin{array}{ll}
+		c_{dry} (1 - \frac{S}{S_i}) + c_{wet} \frac{S}{S_i}  & \mbox{if } S \leq S_i \\
+		c_{wet} \frac{1 - S}{1 - S_i} & \mbox{if } S > S_i
+	\end{array}
+\right.
+\end{equation}
+where $S_i$ is the ideal saturation level. This $c$ is added to the rightside of the Mohr-Coulomb law, as was already mentioned earlier, in section REF. Using the notation from LADREF: 
+\begin{equation} \label{MohrCoulomdLAD}
+\sqrt{3} \sigma_s < \mu_f \sigma_m + c
+\end{equation}
+with $\sigma_s$ the shear stress.\\
+
+Additionally, LADREF add a viscosity term to the velocity field of the granular material, since it behaves more like a viscous fluid when enough water is added. In order to make this viscosity dependent on the amount of water added, they scale the viscosity coefficient $\mu$ once again with the saturation level:
+\begin{equation}
+\mu_{sand} = \mu \frac{S - S_i}{1 - S_i} 
+\end{equation}
+and they bring down the friction coefficient $\mu_f$, used in equation \eqref{MohrCoulomLAD}, as well:
+\begin{equation}
+\mu_f^{sand} = /mu_f \frac{1 - S}{1 - S_i}.
+\end{equation}
+\\
+In conclusion, LADREF present an algorithm that allows a dry granular material to turn into a viscous fluid such as mud (and back).
+
+\subsection{Snow Simulation} \label{sec_mpm}
+Snow is a complicated phenomenon. Many authors avoid talking about snow, as it so complex REFPHYSICS. It sometimes behaves as solid, sometimes as a fluid, and is therefore often seen as a granular material. However, due to the continuously varying phase changes of snow and its compressibility (snow can easily be compressed), there are some differences REFMPM.\\
+
+In order to simulate this, REFMPM use a elasto-plastic constitutive model to model the snow dynamics, in addition to the conservation of mass and momentum usually seen in fluids REFPHYS:
+\begin{equation} \label{MPM_model}
+\sigma = \frac{1}{J} \frac{\delta \Psi}{\delta F_E} F_E^T,
+\end{equation}
+where $F$ is the deformation gradient, $J$ is the determinant of $F$ and $F_E$ is the elastic part of $F$. $\Psi$ is the elasto-plastic potential energy function and $\sigma$ is the Cauchy stress REFMPM.\\
+
+In order to solve for these dynamics, REFMPM use the material point method (MPM). MPM was introduced in the engineering literature SULSKYREF, and is related to FLIP, which was also originally an engineering method, and was introduced into the graphics community by ZABREF. Both methods are a hybrid between the Eulerian (grid) and Lagrangian (particle-based) approach.\\
+
+Where ZABREF claimed MPM was too slow, REFMPM do adapt it to the computer graphics community's needs, using semi-implicit time integration, famously faster than explicit BARAFFREF, and parallelism. MPM is more versatile than FLIP as it can deal with different dynamic models, such as the one in \eqref{MPM_model}, whereas ZABREF had to incorporate different stress, strain and a rigid grouping technique into FLIP. Consequently, MPMREF call MPM a generalization of FLIP.\\
+
+
+\ifx\isEmbedded\undefined
+% References
+\addcontentsline{toc}{section}{References}
+\bibliographystyle{../ref/harvardnat}
+\bibliography{../ref/master}
+\pagebreak
+\end{document}
+\fi

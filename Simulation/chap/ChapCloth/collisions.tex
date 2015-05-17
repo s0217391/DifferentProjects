@@ -1,0 +1,38 @@
+\ifx\isEmbedded\undefined
+\input{../format/format-setup}
+\graphicspath{{../img/}}
+\begin{document}
+\tableofcontents
+\pagebreak
+\input{../format/abbreviations}
+\fi
+
+\section{Collisions} \label{sec_collision}
+
+In order to have a physically plausible cloth simulation, we need some way of avoiding intersection between the cloth and other objects, and between different parts of the cloth itself. As said in the first report, the student chose not to focus on these algorithms, in order to allow time for implementing a tearing algorithm. Hence, the implemented algorithms described are quite basic compared to some of the existing techniques for collision detection and handling.\\
+
+The student chose to implement collision handling based on iterative constraint solving as described by \cite{position_based_dyn}. These constraints work directly on the particle positions and are satisfied in an iterative Gauss-Seidel fashion, after the integration. This iteratively satisfying different constraints converges to a solution with all constraints satisfied, even though the constraints are satisfied independently \citep[chap. 7]{parent_book, position_based_dyn}. The constraints are encapsulated in the codebase within the interface {\bf IConstraint}. The collision handling with objects is quite simple: if the position of particle is inside the object, change the position of the particle to the nearest point on the objects surface. The basic algorithm for this is implemented in the {\bf NoCollisionConstraint} class. The objects of this class have a pointer to an IObject, which can be either a {\bf SphereObject}, or a {\bf MeshObject}. The MeshObject is initialized from an OBJ file and uses Mathieu Sanchez' Signed Distance Field library to detect whether a particle is inside the object and to find the nearest point if necessary. Hence, the collision detection can work with any object.\\
+
+These position based constraints work well with Verlet integration, as they don't use the velocity to update to a new step. This means that when collision occurs and a position changes, this will automatically be reflected in the integration to the next step. For the other types of integration the velocity is set to zero on collisions, giving a lot friction when in contact with the object. Figure \ref{collision} shows an example of the position based collision handling in action.\\
+
+This collision obviously has some limitations. The main one is that the collision detection is not based on triangle-intersection. Hence, the cloth can still intersect the object even though all of its particles are on the outside of the object. To counter this, the sphere drawn in the gui is a bit smaller than the sphere used in simulation. It is however harder to a similar thing for random unknown objects. In any case, this type of collision detection could certainly be improved upon, but as said, this wasn't the focus of the student's project.\\
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=4in,natwidth=366,natheight=166]{img/collision.png}
+  \caption
+   {Cloth resting on a sphere, simulated by the students software. Collision handling based on position based dynamics \citep{position_based_dyn}.}
+ \label{collision}
+\end{figure}
+
+A similar self intersection handling algorithm was implemented, in the {\bf SelfIntersectionConstraint} class, based on the distance between non-connected particles. However, the student had no time left to test and debug this, and hence he is not sure that this is working correctly.
+
+
+\ifx\isEmbedded\undefined
+% References
+\addcontentsline{toc}{section}{References}
+\bibliographystyle{../ref/harvardnat}
+\bibliography{../ref/master}
+\pagebreak
+\end{document}
+\fi

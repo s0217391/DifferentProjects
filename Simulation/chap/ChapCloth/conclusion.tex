@@ -1,0 +1,26 @@
+
+\ifx\isEmbedded\undefined
+\input{../format/format-setup}
+\graphicspath{{../img/}}
+\begin{document}
+%\maketitle
+\fi
+
+\section{Conclusion}
+In this report, the student presented all the algorithms he implemented to simulate the behaviour of cloth. An overview:
+\begin{itemize}
+\item a particle-based model of cloth, with springs for the internal forces. The software can turn any triangular mesh into the chosen model. Section \ref{sec_model}.
+\item Three different integration schemes, including a full implicit one. Section \ref{sec_integrate}.
+\item Some basic collision handling for believability, based on \cite{position_based_dyn}. Section \ref{sec_collision}.
+\item A tearing technique, based on earlier work but complemented with a novel data structure that served better for the given purpose. Section \ref{sec_tear}.
+\end{itemize}
+These algorithms were implemented and encapsulated in a library, as explained in section \ref{sec_software}. In order to demonstrate the library a graphical interface was built using QT and OpenGl, interacting directly with said library.
+
+\ifx\isEmbedded\undefined
+% References
+\addcontentsline{toc}{section}{References}
+\bibliographystyle{../ref/harvardnat}
+\bibliography{../ref/master}
+\pagebreak
+\end{document}
+\fi

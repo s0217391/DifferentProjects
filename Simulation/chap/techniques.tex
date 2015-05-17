@@ -1,0 +1,211 @@
+\ifx\isEmbedded\undefined
+\input{../format/format-setup}
+\graphicspath{{../img/}}
+\begin{document}
+\tableofcontents
+\pagebreak
+\input{../format/abbreviations}
+\fi
+
+\section{Simulation Techniques} \label{sec_tech}
+This section will present several different simulation techniques for the behaviour of granular material. As explained before, visual effects is the main focus of this report. Consequently, the section only focuses on techniques used in the computer graphics community.\\
+
+The techniques are split into three classes. First of all there are height fields, described in subsection REF, a simple but limited way of simulating soil interactions. The other two are more involved: discrete element methods and methods based on a continuum definition of granular media, subsection REF and REF respectively.\\
+
+\subsection{Height Fields}
+Earliest research in the simulation of granular material used a technique called height fields REFS. This is a simple geometric technique, loosely based on the physical laws. These techniques focus on simulating the interaction between soil and rigid bodies. Most of them lack 3D effects, such as splashing, completely.\\
+
+In its most basic form, this technique discretizes the soil into a simple 2D grid (although it is often formulated as a volume, with a second grid under the first, forming small cuboids REFSUM) and keeps track of the height of the middle of each square of the grid. Whenever a rigid body interacts with the grid, the squares in collision with a rigid body are lowered to avoid overlap. A part of the material that gets removed by lowering the elements is then redistributed to adjacent elements. LIREF REFSUM\\
+
+This obviously creates very steep slopes between elements at the edge of the contact zone REFSUM. As was explained in REFPHYS, if the slope of a pile is steeper than the angle of repose, the material flows down. Hence, the height fields technique uses iterative erosions to smooth out slopes which are too steep. This is an effective way of simulating foot steps or tire tracks. REFSUM, LIREF.\\
+
+However, this technique only simulates the ground, and no granular material can splash or stay attached to the rigid objects. In order to achieve such effects ONOREF introduce multi-valued height fields, which are able to simulate granular material on concave objects. However this still doesn't provide splashing effects. SUMREF adds a simple particle simulation to his height field to create splashes, which is a first step towards discrete element techniques, the subject of the next subsection.
+
+
+\subsection{Discrete Element Techniques}
+A simple idea for simulating materials that are made out of large numbers of small grains is simulating each grain separately as a discrete element. Several such techniques have been proposed in the research literature REF. Two key issues need to be addressed when simulating grains individually, already introduced in section REF: the grains collide with each other, in an inelastic and therefore dissipative manner, and there is friction between the different grains, both static and dynamic friction.\\
+
+A first option is to make a large number of rigid bodies and simulate their dynamics. This is the approach taken by Milenkovic REF, amongst others REF (same guy and Guendelman REF). <TODO>Check these papers for some peculiarities of the techniques and insert. Preferably some equations.</TODO>. Due the small size of sand grains, some authors use particles rather than rigid bodies. They do however use rigid body collisions, avoiding overlap between particles, effectively making it into a rigid body simulation with spheres (REF).\\
+
+It is however clear that a rigid body collisions are infeasible for the scale most granular material simulations require (i.e. thousands and millions of grains). As was shown by McNamara and Young (REF), <TODO>Refer to section</TODO> granular materials are subject to inelastic collapse, where some grains undergo an infinite amount of collisions in a finite amount of time. For this reason, a lot of authors prefer a different approach to the collision handling in discrete element methods, examples are (REFS!!). All of these techniques use a particle-system, but rather than using a typical Event-Driven collision handling (REF), they use Molecular Dynamics (MD). \\
+
+<TODO>papers before Bell</TODO>\\
+
+In MD, small overlap between particles is allowed. Overlapping particles get a contact force assigned to push them apart. One example of this principle used for granular material can be found in the work of Nathan Bell (REF). We introduce this idea with spherical particles, based on the ideas (and notation) of Bell (REF). Note that we assume that overlapping particles have been found. Obviously it is necessary to have an efficient way of finding neighbouring or overlapping particles to have an efficient algorithm. This is however a recurring problem in computer graphics and solutions based on spatial hashing are well-known, and are out of the scope of this report.\\
+
+We start by defining the necessary variables. Given two particles' positions $x_1$ and $x_2$ and their radius $r_1$ and $r_2$, we can define the overlap $\xi$ between the two:\\
+\begin{equation}
+\xi = max(0, r_1 + r_2 - || x_2 - x_1||).
+\end{equation}
+This is the distance of overlap along the line of the two centers. The normalized direction $N$ of this line of centers is:
+\begin{equation}
+N = \frac{x_2 - x_1}{||x_2 - x_1||}.
+\end{equation}
+For the dynamic friction, we will need the relative velocity $V$ as well:
+\begin{equation}
+V = v_1 - v_2
+\end{equation}
+\begin{equation}
+\xi_v = V \cdot N
+\end{equation}
+\begin{equation}
+V_t = V -  \xi_v N
+\end{equation}
+In these equations, $V$ is the relative velocity, found from $v_1$ and $v_2$, the velocity of the particles. The relative velocity is split into a normal component and a tangential. The normal component is represented by $\xi_v$, which is the magnitude of the relative velocity in the normal direction N. The tangential velocity is represented by the vector $V_t$.\\
+
+In this MD concept, the particles are then subjected to forces based on these variables. In order to handle collisions, normal forces are applied, while the friction is off course a tangential force. Starting with the first, we take a look at the normal forces introduced by Bell REF. The normal force is aligned with the direction $N$ and the magnitude $f_n$ is computed using following model:
+\begin{equation} \label{eq_normalf}
+f_n + k_d \xi_v \xi^{\alpha} + k_r \xi^{\beta}  = 0,
+\end{equation} 
+with $k_d$ the viscous damping coefficient and $k_r$ the elastic restoration, which controls particle stiffness. Due to the dissipative nature of the collisions, explained in section REF, the damping term is essential.\\
+
+The simplest way to use this model is to choose $\alpha = 0$ and $\beta = 1$, which turns \eqref{eq_normalf} into a damped linear spring force. The other two variables; $k_r$ and $k_d$, can then be chosen by the user or determined based on a measured normal restitution coefficient $\epsilon$ and contact duration $t_c$ BELLREF:
+\begin{equation}
+k_d = 2 m_e \frac{- \mathrm{ln} \epsilon}{t_c},
+\end{equation}
+\begin{equation}
+k_r =\frac{m_e}{t_c ^2} (\mathrm{ln}^2 \epsilon + \pi ^2).
+\end{equation}
+Here $m_e$ is defined as follows:
+\begin{equation}
+\frac{1}{m_e} = \frac{1}{m_1} + \frac{1}{m_2}
+\end{equation}
+with $m_1$ and $m_2$ the mass of the particles. More complex models can be used as well, such as one based on Hertz' model for contact forces between spheres REF. Here $\beta$ is 1.5, and $k_r$ is determined with the following relationships:
+\begin{equation}
+\frac{1}{R_{eff}} = \frac{1}{R_1} + \frac{1}{R_2}
+\end{equation}
+\begin{equation}
+\frac{1}{E_{eff}} = \frac{1 - \mu_{1}^2}{E_1} + \frac{1 - \mu_{2}^2}{E_2}
+\end{equation}
+\begin{equation}
+k_r = \frac{4}{3} E_{eff} \sqrt{R_{eff}}
+\end{equation}
+Here $E_1$ and $E_2$ are the Young modulus of the particles, $\mu_1$ and $\mu_2$ the Poisson ratios. $\alpha$ then still needs to be chosen. Complex models might use a value that depends on the relative velocity $V$ REFSEEBELL. Nathan Bell chooses $\frac{1}{2}$ in his work REFBELL.\\
+
+These normal forces are meant to handle the collisions, but frictional, i.e. tangential, forces are needed for plausible simulation of granular materials, as was earlier explained REFSECTIONPHYS. Continuing with Bell's work, he only introduces an explicit force term for dynamic friction, i.e. friction between moving particles. Static friction is handled in a different way. The next paragraph will show the dynamic friction model, after the static friction is explained.\\
+
+The simplest form of dynamic friction is a damping force on the tangential velocity only. However, as explained in section REFPHYS, friction is determined by the law of Coulomb. Hence a better option is using following model for the frictional force $F_t$:
+\begin{equation}
+F_t = - \mu f_n \frac{V_t}{||V_t||},
+\end{equation}
+which incorporates the law of Coulomb and the friction coefficient $\mu$. Care must be taken with the discontinuity that occurs when $V_t$ equals zero REFBELL.\\
+
+So far, coming up with a model for a MD particle-based granular material simulation has been straightforward. However the model still misses static friction. As explained in the physics overview, section SECREFPHYS, static friction is essential for reproducing some of the effects seen in granular material, such as the forming of piles. Using Coulomb's law as a threshold is infeasible in practice BELLREF, and some different methods have been introduced SEVERALREFS.\\
+
+<TODO> DEFINITELY NEEDS EXPANDING/REWORDING </TODO>
+Some authors choose to use a spring for this type of friction. The spring gets introduced when the particles first touch. An example can be found in REFLH93 <TODO>LOOK THIS UP, and implement it</TODO>. As long the particles remain in contact (i.e. $\xi > 0$), the total displacement from the original contact point is forms the basis of the tangential force:
+\begin{equation}
+F_t = - \mathrm{min}(\mu f_n, k_t ||D|| \frac{D}{||D||}),
+\end{equation} 
+where all the variables are as previously defined.\\
+
+Another idea is to rely on particle geometry itself. This approach is adopted by SEVERALREFS (at least 4). In this case, the simulation happens with non-spherical particles, rather than the typical spherical ones. In this approach, no explicit frictional term is necessary to account for the static friction: the normal forces between the non-spherical structures provide the same behaviour static friction does (i.e. resistance to relative tangential motion).\\
+
+These non-spherical particles are usually built by connecting several spherical ones together. REFPB93 compounded spheres together with springs. Others, such BELLREF, REFWB93, REFNEWER, use rigid structures of several spheres. While this avoids the instability of spring systems, it adds the necessity to keep track of the orientation of the particles, i.e. we need to calculate torque and angular velocity as well. This happens by using the classic formula for the  torque $t$ by force $F$:
+\begin{equation}
+t = (p - x) \times F,
+\end{equation} 
+where $p$ is the point where the force works and $x$ is the rotational center of the particle. Basic dynamics teaches us that integrating the sum of the torques (one for each force) gives the angular velocity, which contributes to the rotation of the particle.\\
+
+Taking these kind of particle simulations to a larger scale is difficult. Simulating a beach with discrete elements is obviously infeasible. To somewhat counter these problems, some authors have proposed multiscale approaches, e.g. LucianiREF, ALDUANREF. Picking out the more recent technique, AlduanRef build on the work of BELLREF, using the same force models and non-spherical particles made out of rigid compositions of spheres for the (static friction). However, AlduanREF computes the internal forces (i.e. normal forces and dynamic friction) on coarse, low resolution particles. These results are then distributed down to finer, high resolution particles using interpolation between the values of the closest low resolution particles. The external forces are applied to both high and low resolution particles. They report speed-ups of over 11x for simulations of 2500 low resolution and 50000 high resolution particles.\\
+
+A different discrete element approach can be found in the position based dynamics (PBD) class of algorithms. These particle-based methods avoid the instability of integrating force models by working directly on the position of the particles. These positions are subjects to constraints mimicking the dynamic behaviour, and the different constraints are solved one-by-one in Gauss-Seidel or Jacobi iterations. REFMULLER06, 07?, MACKLIN. Because of the large time-steps allowed by the stability and the possibility to parallellize the constraint solving, these algorithms are popular in real-time applications and computer games. MACKLINREF.\\
+
+MACKLINREF is most the recent publication involving position based dynamics, and it includes a way of simulating granular materials. Where MullerREF is unable to simulate static friction, Macklin introduces a constraint for it, including static friction in the constraint solve loop. This allows PBD to simulate a sand pile at rest, one of the classic results of static friction REFPHYSICSEC.\\
+
+For Granular materials in particular, PBD as in MACKLINREF first computes new positions for all particles based on other constraints, including collision constraints. It then uses these collision constraints to calculate a relative frictional position delta of any two particles that were in contact:
+\begin{equation}
+\delta x_{\perp} = ( (x_i^* - x_i) - (x_j^* - x_j) ° \perp n,
+\end{equation}
+where $x^*$ are the newly computed particle positions and $x$ the positions at the start of the time-step. The contact normal is represented as $n$, and $\perp$ means that the result is project to be perpendicular to $n$. The algorithm uses this value to determine whether to remove all tangential movement (static friction) or part of it (dynamic friction). The static one is used when $|\delta x_{\perp}| < \mu_s d$, where $\mu_s$ is the static friction coefficient and $d$ is the overlap between the particles. In conclusion, Macklin uses the Coulomb's law but replaces the forces by positions and displacements MACKLINREF.\\
+
+Another issue that's worth mentioning is two way coupling between the granular media and rigid bodies. These interactions are subject to the friction forces as well, and so contact between them has influence on both the granular material and the rigid body. Both BELLREF and NEWERREF use the simple idea of covering the rigid body surfaces with their non-spherical particles. The forces on these particles can then be used in the rigid body simulation and the friction is automatically taken into account because of the non-spherical particles and the dynamic friction, as in EQREF, between the particles.\\
+
+In MACKLINREF, all behaviour is particle-based, including rigid bodies. Hence two-way coupling comes automatically when the friction constraints are applied to the particles of the rigid bodies in contact with the granular material as well.
+
+
+\subsection{Continuum-based Techniques}
+Granular material exhibits peculiar physics: while they consists of huge amounts of small grains, the material shows both solid and fluid-like behaviour. This was explained earlier, in section REF. The previous section gave an overview of techniques based on individual grain behaviour, this section looks at methods that approach granular material from its fluid-like behaviour, i.e. they see granular media as a continuum and simulate it as such.\\
+
+INLEIDEN MET PHYICS!!\\
+
+The first to do this were Zhu and Bridson REF. They build upon what they call the standard approach in soil mechanics, which is to simulate granular materials as a continuum in terms of plastic yielding. This plastic yielding is used to introduce the friction that is so essential to granular material behaviour SEC1REF. Hence, the Mohr-Coulomb law (note that a very similar Drucker-Prager model could be used as well NARREF) is used to determine when the materials "yields", i.e. starts flowing REFZAB:
+\begin{equation}
+\sqrt{3} \frac{|\sigma - \sigma_m \delta |_F}{\sqrt{2}} < sin \phi \sigma_m,
+\end{equation}
+where $\sigma$ is the stress tensor, $\sigma_m$ is the mean stress and $\phi$ is the friction angle. The norm taken in the left side is the Frobenius norm, denoted by the subscript. This equation means that the shear stress ($\sigma -\sigma_m \delta$) in the left side is ignored because of friction when the pressure $\sigma_m$ pushing the material together is high enough. This law can be seen as a generalization of the classical Coulomb friction to stress tensors, where the friction coefficient is replaced by the sine of the friction angle. By using this rule to determine when the medium starts to flow, ZABREF incorporate static friction into a continuum model.\\
+
+The standard approach in soil mechanics, according to ZABREF and sectionREF, is to add an elasticity model and simulate the material with a finite element solver. However, as was noted earlier, the computer graphics society doesn't accuracy as much as plausibility. ZABREF therefore choose to simplify the model, without losing any visual clues. These simplifications allow them to simulate granular material using a modified fluid simulation algorithm.\\
+
+ZABREF ignore the elastic deformation and the volume changes when flow starts and stops, as they are not perceivable by eye. Ignoring these makes the simulation easier: it allows the granular media to be split up in regions of rigid behaviour (e.g. a pile) and regions of fluid-like behavior (shearing flow). A final assumption is that the pressure in the material is similar to that in an incompressible fluid. As explained in SECREFPHYSICS, this is untrue: in granular material there is an upper limit to the pressure. ZABREF will hence produce inaccurate results for the case of an hour glass SECREFPHYS. Again, accuracy is not of the utmost importance here.\\
+
+ZABREF then use following models for the frictional stress $\sigma_f$ and $\sigma_r$:
+\begin{equation}
+\sigma_f = - \sin \phi p \frac{D}{\sqrt{\frac{1}{3}} |D|_F}
+\end{equation}
+for the parts where the material is flowing, with $p$ the pressure (see section REFSECPHYSICS) and $D$ the strain rate. All others variables have been defined earlier. For the frictional stress $\sigma_r$ in the rigid parts, ZABREF use:
+\begin{equation}
+\sigma_r = - \frac{\rho D \delta x^2}{\delta t},
+\end{equation}
+where $\rho$ is the density. This is derived from the forces needed to stop a cell with side length $ \delta x$ from sliding during a timestep $\delta t$ ZABREF. They use $\sigma_r$ to check the condition for flow EQREF. Sometimes a constant is added to the right side of EQREFCOND, to simulate cohesion. This allows for sticky granular materials, such as snow. If the cell does not yield, this $\sigma_r$ is stored as the stress and the cell is marked as rigid. Otherwise $\sigma_f$ is computed for the cell.\\
+
+These steps of computing the stress and rigidity or fluidity are incorporated in a fluid simulator: all usual steps are carried out as if it were a fluid (adding gravity, applying boundary conditions, computing the pressure and ensuring incompressibility). After that $\sigma_r$ is computed, and $\sigma_f$ if necessary. The velocity field in neighbouring groups of rigid cells are then projected to make the group move as a rigid body. The velocities in the flowing cells are updated with the computed stress ZABREF. As was the case for particle-based methods in the previous subsection, friction at the boundaries of the material is necessary as well. ZABREF use the friction model of BRIDSONREF2002 for this, and apart from that two-way coupling is handled as it is for fluids. Zhu and Bridson REF then introduce the FLIP method, a hybrid between Eulerian and Lagrangian, for fluids and make the mentioned changes to it to simulate sand.\\
+
+TODO ADD LAD - they use SPH first! </TODO>
+
+Continuing on ZABREF, NARREF note that ZAB's work has flaws due to the assumption about the pressure. Since ZAB use the pressure of an incompressible fluid, the granular material have too much fluid-like properties,  such as cohesive forces NARREF. Cohesion is indeed not present in dry granular materials, although it is in wet sand and snow. They again use FLIP, a hybrid of Eulerian and Langrangian fluid simulation methods.\\
+
+Working from the same ideas as ZABREF, i.e. the continuum granular media formulation from section SECREF and a plastic yield criterion for the friction response EQREF, NARREF then introduces a new way of computing the pressure in granular materials, different from the way it's computed in incompressible fluids. To do so, two simplifying assumptions are made: They assume there is a max density $\rho_{max}$ for the granular material, beyond which it cannot be compacted more, and that if the current density $\rho$ is lower than the critical one, particles only interact through intermittent collisions, which are ignored. They then require the pressure $p$ to avoid densities higher than $\rho_{max}$, without providing internal forces when the material is diverging, as they want no cohesion.\\
+
+NARREF expresses this as a constraint on the volume fraction $\phi$:
+\begin{equation}
+\phi = \frac{\rho}{\rho_{max}} \leq 1.
+\end{equation}
+From this constraint the corresponding pressure $p$ can be computed, as happens in NARREF09CROWD, using a minimization problem.\\
+
+NARREF then computes the (essential!) frictional stress in each cell based on the maximum dissipation principle, introduced by SIMOREF, by computing the frictional stress that takes out the most kinetic energy (which implies maximum dissipation, as the behaviour of granular material is dictated by dynamic principles JAEGERREF). They then minimize a weighted version of the energy to have a well-conditioned problem REFNAR:
+\begin{equation}
+E = \frac{1}{2 \rho_{max}} \int \rho^n ||v_i||^2 \mathrm{d}V
+\end{equation} 
+where $v_i$ is the intermediate velocity defined as:
+\begin{equation}
+v_i = v^n + \frac{\delta t}{\rho^n} (f_{ext} - \delta p + \delta * s).
+\end{equation}
+Here $s$ is the frictional stress we are looking for, $f_{ext}$ are the external forces and $p$ is the pressure (NARREF split the stress $\sigma$ in pressure $p$ and frictional stress $s$). $\delta t$ is the timestep and $v$ the velocity field. The superscript $n$ stands for the current timestep. The frictional stress used is the one that minimizes $E$ NARREF, with the constraint that $s$ is limited by the Mohr-Coulomb law in EQREF.\\
+
+In conclusion, NARREF use FLIP to simulate granular materials, much like Zhu and Bridson. However Narain uses a different way of calculating the frictional stress and changes the way the pressure is computed to avoid cohesion effects. TODO call this Unilateral incompressibility\\
+
+Very much in the same style of thinking, ALD11REF adapt a fluid technique to simulate granular material. In this case, it is the smoothed particle hydrodynamics (SPH) technique, more specifically the variant with predictive-corrective incompressibility (PCISPH) as introduced by REF. Just like in NARREF, in order to change the technique from incompressible fluid to granular materials, they alter the way the incompressibility is computed so it becomes unilateral incompressibility, as in EQREF, and they add a frictional stress.\\
+
+For the unilateral incompressibility, ALD11REF keeps PCISPH almost the same: the jacobi-style iterations to find the fluid density $\rho_{max}$ are kept the same, but a corrective pressure increment is only applied when the current density $\rho$ is larger than $\rho_{max}$. If it is smaller, the granular material is allowed to flow freely. The corrective pressure term stays the same as in REFPCISPH, for particle $i$:
+\begin{equation}
+\delta p_i = \delta \cdot (\rho_i - \rho_{max})
+\end{equation}
+where the corrective factor $\delta$ is computed as:
+\begin{equation}
+\delta = \frac{\rho_0^2}{2m^2 (\Sigma_j \nabla W_{ij}^T \Sigma_j \nabla W_{ij} + \Sigma_j \nabla W_{ij}^T\nabla W_{ij})}
+\end{equation}
+where $m$ is the mass of the particle, $\delta t$ is the time step, and $\nabla W_{ij}$ is the kernel function between particle $i$ and $j$. A full description of the SPH algorithm is out of scope for this report. We refer to PCISPHREF.\\
+
+For the friction, ALD11REF doesn't minimize the kinetic energy as in NARREF, but minimize the strain rate, as this is a measure of relative velocity rather than absolute velocity and hence better suited. This is however still based on the principle of maximal dissipation REF. The friction is limited by a Mohr-Coulomb type of plastic yield law once again EQREF. The minimization problem is\\
+\begin{equation}
+\min ||\epsilon||, s.t. ||s_{ij}|| \leq \alpha \cdot p.
+\end{equation}
+Here $\epsilon$ is the strain rate, $alpha$ $=$ $\sqrt{\frac{2}{3}} sin \theta$, with $\theta$ the angle of repose and $p$ the pressure.\\
+
+TODO add how to minimize if you think it's necessary.\\
+
+
+Ihmsen REF use SPH, using the unilateral incompressibility and friction from ALD11REF. However to provide better performance, the authors perform the internal force calculations on a coarser scale than the external ones, very in much in the spirit of ALDREFPARTICLES. This gives the advantages of the continuum approaches with the added benefits of high resolution details.\\
+
+
+
+
+\ifx\isEmbedded\undefined
+% References
+\addcontentsline{toc}{section}{References}
+\bibliographystyle{../ref/harvardnat}
+\bibliography{../ref/master}
+\pagebreak
+\end{document}
+\fi

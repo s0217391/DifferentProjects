@@ -1,0 +1,21 @@
+\ifx\isEmbedded\undefined
+\input{../format/format-setup}
+\graphicspath{{../img/}}
+\begin{document}
+\tableofcontents
+\pagebreak
+\input{../format/abbreviations}
+\fi
+
+\section{Physics} \label{sec_physics}
+
+Behringer!
+
+\ifx\isEmbedded\undefined
+% References
+\addcontentsline{toc}{section}{References}
+\bibliographystyle{../ref/harvardnat}
+\bibliography{../ref/master}
+\pagebreak
+\end{document}
+\fi

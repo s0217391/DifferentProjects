@@ -1,0 +1,62 @@
+\ifx\isEmbedded\undefined
+\input{../format/format-setup}
+\graphicspath{{../img/}}
+\begin{document}
+\tableofcontents
+\pagebreak
+\input{../format/abbreviations}
+\fi
+
+\section{Integration} \label{sec_integrate}
+As explained in the previous report, the problem of finding the movement of the particles is a differential equation (notation from \citep{baraff_implicit}): 
+\begin{equation}\label{diff_eq}
+\frac{\mathrm{d}^2 \textbf{x}}{\mathrm{d}t^2} = \textbf{M}^{-1} \textbf{F}.
+\end{equation}
+Where $\textbf{x}$ is a vector containing the geometric positions of all particles in the system, the matrix $\textbf{M}$ represents the mass distribution of the system and $\textbf{F}$ is a vector containing the resulting force on every particle.\\
+
+It is impossible to solve equation \eqref{diff_eq} analytically, and all particle-based techniques for cloth simulation use some numerical integration scheme on discretized timesteps to solve it \citep{provot_model, bridson_2002, robust_friction_2007}. The student has implemented three different integration schemes: Explicit and implicit Euler, and Verlet.\\
+
+To start with the simplest one, the explicit euler integration scheme, the student implemented following formulas in the {\bf ExplicitEulerIntegrator} class (notation from \citep{provot_model}):
+\begin{equation} \label{forw_euler}
+\begin{aligned}
+\textbf{x}_i = \textbf{x}_{i-1} + h \textbf{v}_{i-1},\\
+\textbf{v}_i = \textbf{v}_{i-1} + h \textbf{a}_{i-1}.
+\end{aligned}
+\end{equation}
+$\textbf{x}_i$ is the position of the particle at timestep $i$ and $\textbf{v}_i$ is the velocity of the particle. Furthermore, $h$ is the used timestep, and $\textbf{a}_{i}$ is the acceleration. One can tell from the formulas that the particles are updated separately. Obviously, being the most basic explicit method, this implementation suffers from the typical explicit integration problems, explained in the first report, and blows up easily.\\
+
+The second integration scheme, Verlet Integration, was implemented in the {\bf VerletIntegrator} class and follows following formula:
+\begin{equation} \label{verlet}
+\begin{aligned}
+\textbf{x}_{i+1} = 2 * \textbf{x}_{i} - \textbf{x}_{i-1} + h^2 \textbf{a}_{i}
+\end{aligned}
+\end{equation}
+Here all symbols are the same as in the explicit euler equations, and the updates are still on individual particles. Note that the acceleration is used to update the position directly, without updating the velocity. This works very well with the position based collision response \cite{position_based_dyn}, as we will see later. Wherever the velocity is needed, an estimation is used. However, the calculated dynamics do not depend on this estimation. On the downside, this scheme is still explicit, and suffers from the same problems as the Euler scheme.\\
+
+As explained in the earlier report, implicit integration can improve the performance of cloth simulation by having large timesteps with a stiff differential equation. The classic example of implicit integration for cloth simulation is \cite{baraff_implicit}. The student has implemented their integration scheme, in the {\bf ImplicitEulerIntegrator} Class. This follows following equations:
+\begin{equation}\label{back_euler}
+\begin{aligned}
+\textbf{x}_i = \textbf{x}_{i-1} + h \textbf{v}_i \\
+\textbf{v}_i = \textbf{v}_{i-1} + h \textbf{M}^{-1} \textbf{F}_i
+\end{aligned}
+\end{equation}
+The variables $x$ and $v$ are now variables containing the whole system, although still denoting position and velocity. $F$ denotes the forces on the system, and $M$ is the mass matrix of the system.\\
+
+Skipping the details of the derivation, as they are in the first report, the method in  \cite{baraff_implicit} comes down to solving following linear system for $\Delta \textbf{v}$:
+\begin{equation}\label{system}
+\Big(\textbf{I} - h\textbf{M}^{-1}\frac{\partial \textbf{F}}{\partial \textbf{v}}-h^2\textbf{M}^{-1}\frac{\partial \textbf{F}}{\partial \textbf{x}} \Big) \Delta \textbf{v} = h\textbf{M}^{-1} \Big( \textbf{F}_{i-1} + h \frac{\partial \textbf{F}}{\partial \textbf{x}} \textbf{v}_{i-1} \Big).
+\end{equation}
+Here $\textbf{I}$ is the only new symbol, being the identity matrix. All variables are now vectors containing the whole of the cloth system, and this equation needs to be solved once, updating all particles at the same time. Note that the equation contains the jacobians of the forces, which were given in the previous section. The student solved this system using the conjugate gradient method as in \cite[chap. 38]{numerical_algebra}. Some of the techniques described in \citep{volino_matrix_free} were used to optimize this process, most prominently the matrix multiplication without actually making and storing the matrix.\\
+
+At the moment, the software allows the user to select one of these three methods, so that one can play around with the different methods and see their differences.\\
+
+
+
+\ifx\isEmbedded\undefined
+% References
+\addcontentsline{toc}{section}{References}
+\bibliographystyle{../ref/harvardnat}
+\bibliography{../ref/master}
+\pagebreak
+\end{document}
+\fi

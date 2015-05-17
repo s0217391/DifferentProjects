@@ -1,0 +1,27 @@
+
+\ifx\isEmbedded\undefined
+\input{../format/format-setup}
+\begin{document}
+%\maketitle
+\fi
+
+% The begin{abstract} seems to bug the page counter
+\section*{Abstract}
+\addcontentsline{toc}{section}{Abstract}
+\label{sec:abstract}
+
+This report outlines the major existing techniques for the simulation of granular materials, such as sand, snow, sugar, powder, ...  It will give a short overview of the laws of physics that these materials obey, which are quite particular. After reviewing the physics, it explains the different ways these physics are simulated in the computer graphics community. It will also take a look at the interaction between granular material and other materials, and techniques to simulate these interactions. Due to the nature of our course, the scope of this report is mostly limited to techniques used in the computer graphics and visual effects community, which has specific demands for its techniques. The report concludes with an overview of the implementation of one of the techniques the author made.
+
+\paragraph*{Keywords:}{Granular Materials, Sand, Simulation, Computer Graphics}
+
+%\end{abstract}taw
+
+
+\ifx\isEmbedded\undefined
+% References
+\addcontentsline{toc}{chapter}{References}
+\bibliographystyle{ref/harvard}
+\bibliography{ref/master}
+\pagebreak
+\end{document}
+\fi

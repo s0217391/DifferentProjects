@@ -1,0 +1,26 @@
+
+\ifx\isEmbedded\undefined
+\input{../format/format-setup}
+\graphicspath{{../img/}}
+\begin{document}
+%\maketitle
+\fi
+
+\section{Software System} \label{sec_software}
+The algorithms described in the previous section were implemented in C++, using QT, OpenGl and the NGL library. The software takes OBJ files as input data for the piece of cloth and the objects it collides with. The software system and its design are described in the ASE report. To help locate the algorithms, This report includes an annotated class diagram, see image \ref{fig_class}. Since it is hard to read in this size, I included the png file in my submission. While the elements of the modified half edge structure are represented as classes conceptually, they are implemented as structs in the TriangleRenderStructure.h file.\\
+
+\begin{figure}
+   \centering
+     \includegraphics[width=\textheight, angle = 90]{img/annotated_diagram.png}
+  \caption{The presented class diagram. The diagrams shows where to find the algorithms described in this report.}
+ \label{fig_class}
+\end{figure}
+
+\ifx\isEmbedded\undefined
+% References
+\addcontentsline{toc}{section}{References}
+\bibliographystyle{../ref/harvardnat}
+\bibliography{../ref/master}
+\pagebreak
+\end{document}
+\fi

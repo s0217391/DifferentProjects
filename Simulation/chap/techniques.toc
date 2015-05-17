@@ -1,0 +1,6 @@
+\contentsline {section}{List of Acronyms}{2}{section*.2}
+\contentsline {section}{\numberline {1}Simulation Techniques}{3}{section.1}
+\contentsline {subsection}{\numberline {1.1}Height Fields}{3}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}Discrete Element Techniques}{4}{subsection.1.2}
+\contentsline {subsection}{\numberline {1.3}Continuum-based Techniques}{11}{subsection.1.3}
+\contentsline {section}{References}{16}{equation.1.25}

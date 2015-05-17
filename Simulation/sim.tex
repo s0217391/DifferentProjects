@@ -1,0 +1,48 @@
+\newcommand{\isEmbedded}{true}
+
+\input{format/format-setup}
+\begin{document}
+
+% Front page
+\input{format/front}
+% Copyrights
+\setcounter{page}{1}
+\pagenumbering{roman}
+
+% Table of contents, figures and tables.
+%\addcontentsline{toc}{section}{Table of contents}
+%\tableofcontents
+%\pagebreak
+%% List of figures and tables might be a bit too much, you can remove as you feel
+%\addcontentsline{toc}{section}{List of figures}
+%\listoffigures
+%\pagebreak
+%\addcontentsline{toc}{section}{List of tables}
+%\listoftables
+%\pagebreak
+%\input{format/abbreviations}
+%\pagebreak
+
+\graphicspath{{./img/}}
+
+% Abstract
+\input{chap/abstract}
+\pagebreak
+% Acknowledgements bit too much for a report
+%\input{format/acknowledgements}
+\setcounter{page}{1}
+\pagenumbering{arabic}
+% Chapters
+\input{chap/introduction}
+\input{chap/physics}
+\input{chap/techniques}
+\input{chap/discussion}
+\input{chap/specialcases}
+\input{chap/conclusion}
+\newpage
+% References
+\addcontentsline{toc}{section}{References}
+\bibliographystyle{ref/harvardnat}
+\bibliography{ref/master}
+
+\end{document}
