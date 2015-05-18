@@ -5,12 +5,6 @@ import operators as ops
 var = ['prey[0]', 'prey[1]']
 resultvar = []
 
-def randomElementFromList(ellst):
-	if(len(ellst) == 0):
-		return 1
-	ind = r.randint(0, len(ellst) - 1)
-	return ellst[ind]
-
 def getNewVar():
 	tempNb = len(resultvar)
 	newvar = 'temp' + str(tempNb)
@@ -27,31 +21,31 @@ def selectResultVar():
 			return getNewVar()
 		else:
 			return resultvar[selector]
-			
-def getOperand(ellst):
-	if len(ellst) == 0:
-		return r.randint(0, 100) * r.random()
-	else:
-		# right now set so it never uses a number
-		if r.random() < -1.0:
-			return r.randint(0, 100) * r.random()
-		else:
-			return randomElementFromList(var)
 
 def buildSimpleExpression():
-	a = getOperand(var)
-	b = getOperand(var)
-	resultVar = selectResultVar()
-	return ops.getRandomOp(a, b, resultVar)
+	lenresv = len(resultvar)
+	resultv = selectResultVar()
+	lenresvnew = len(resultvar)
+	varList = var
+	if lenresv != lenresvnew:
+		varList = var[:-1]
+	return ops.getRandomOp(varList, resultv)
+
+def clearVars():
+	global var
+	global resultvar
+	var = ['prey[0]', 'prey[1]']
+	resultvar = []
 
 # generates a list of lines to be executed in order
 def generateCodeBlock(maxlns = 10, seed = 0, minlns = 1):
+	clearVars()
 	r.seed(seed)
 	lines = r.randint(minlns, maxlns)
 	result = []
 	for i in range(lines):
+		# concat lines to result list 
 		result = result + buildSimpleExpression()
-	x = getOperand(var)
-	y = getOperand(var)
-	result.append("return np.array([" + x + ", " + y + "])")
+	#get result
+	result = result + ops.getReturnStatement(var)
 	return result

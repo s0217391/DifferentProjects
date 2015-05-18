@@ -13,16 +13,17 @@ def writeLine(f, st = '', tabs = 0):
 def startFile(f):
 	writeLine(f, '#!/usr/bin/python');
 	writeLine(f, 'import sys');
-	writeLine(f, 'import numpy as np')
 	writeLine(f)
 	writeLine(f, "def compute(prey):")
 
 def main(argv=None):
-	newscript = open("generatedBehaviour.py", 'w')
-	startFile(newscript)
-	lines = eb.generateCodeBlock(seed = 195, minlns = 3, maxlns = 25)
-	for x in lines:
-		writeLine(newscript, x, 1)
+	for i in range(0, 500):
+		newscript = open("firstGenScripts/behav" + str(i + 1) + ".py", 'w')
+		startFile(newscript)
+		lines = eb.generateCodeBlock(seed = i, minlns = 3, maxlns = 25)
+		for x in lines:
+			(line, tabs) = x
+			writeLine(newscript, line, tabs + 1)
 	
 if __name__ == "__main__":
 	sys.exit(main())

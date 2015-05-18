@@ -23,7 +23,6 @@ class Agent:
 		force = self.behavior.compute(self, agents)
 		drag = -1.0 * self.dragCoef * self.vel
 		force = force + drag
-		print force
 		self.vel = self.vel + self.timestep * (force / self.mass)
 		velMag = np.sqrt(np.dot(self.vel, self.vel))
 		if(velMag > self.maxVel):
@@ -69,7 +68,6 @@ class runAwayBehaviour(Behaviour):
 class randomBehaviour(Behaviour):
 	def compute(self, aself, agents):
 		res = np.array([r.random(), r.random()])
-		#print res
 		return res
 		
 class scriptedBehaviour(Behaviour):
@@ -78,10 +76,14 @@ class scriptedBehaviour(Behaviour):
 		
 	def compute(self, aself, agents):
 		other = 0
-		if aself.ID == agents[0].ID: other = 1
+		if aself.ID == agents[0].ID: 
+			other = 1
 		otherAgent = agents[other]
 		relativePos = otherAgent.pos - aself.pos
-		return self.scriptModule.compute(relativePos)
+		inpArray = [relativePos[0], relativePos[1]]
+		force = self.scriptModule.compute(inpArray)
+		result = np.array(force)
+		return result
 	
 			
 		
