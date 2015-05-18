@@ -1,3 +1,7 @@
+# Add this to make it work in QtCreator
+QMAKE_MAC_SDK = macosx10.9
+
+
 # This specifies the exe name
 TARGET=SandSim
 # where to put the .o files

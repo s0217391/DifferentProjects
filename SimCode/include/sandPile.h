@@ -10,12 +10,12 @@ class Sand{
 public:
   inline Sand() {;}
 
-  inline addParticle(Particle _p) {m_particles.push_back(_p);}
-  inline clearParticles() {m_particles.clear();}
+  inline void addParticle(Particle _p) {m_particles.push_back(_p);}
+  inline void clearParticles() {m_particles.clear();}
 
 
-  inline addForce(ForcePtr _f) {m_forces.push_back(_f);}
-  inline clearForces() {m_forces.clear();}
+  inline void addForce(ForcePtr _f) {m_forces.push_back(_f);}
+  inline void clearForces() {m_forces.clear();}
 
   void updateParticles();
 
