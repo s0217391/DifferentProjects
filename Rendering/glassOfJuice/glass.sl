@@ -4,7 +4,8 @@ I'm assuming it's pretty similar because well, it's glass */
 surface glass(
 	float ior = 1.5;
 	float Ks = 1;
-	float rough = 0.01
+	float rough = 0.01;
+	string mapname = ""
 	)
 {
 	normal Nn = normalize(N);
@@ -54,4 +55,14 @@ surface glass(
 	
 	//Actual Color
 	Ci =  Ks * specular(Nn, V, rough) + result;
+
+	
+	//Ci = color noise(P);
+	
+	if(mapname != ""){
+		float ss = mod(5*s, 1);
+		float tt = mod(5*t, 1);
+		Ci = color texture(mapname, ss, tt);
+	}
+	
 }
