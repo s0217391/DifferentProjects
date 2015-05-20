@@ -13,12 +13,12 @@ Projection "perspective"
 
 PixelSamples 1 1
 Rotate -90 1 0 0
-Translate 0 -5.25 -3.5
+Translate 0 -5.25 -5.5
 
 WorldBegin
 
 # Making sure rays will be able to pass through the glass
-Attribute "trace" "int maxspeculardepth" [1]
+Attribute "trace" "int maxspeculardepth" [4]
 Attribute "visibility" "trace" [1]
 Attribute "visibility" "transmission" [1]
 

@@ -60,9 +60,9 @@ surface glass(
 	//Ci = color noise(P);
 	
 	if(mapname != ""){
-		float ss = mod(5*s, 1);
-		float tt = mod(5*t, 1);
-		Ci = color texture(mapname, ss, tt);
+		float ss = 4*s - 0.5;
+		float tt = 4*t - 3.5;
+		Ci += (1, 0.5, 0.5) * color texture(mapname, ss, tt);
 	}
 	
 }
