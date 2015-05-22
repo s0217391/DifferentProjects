@@ -5,5 +5,4 @@ surface insideGlass()
 	
 	if(glass != null)
 		glass->surface(Ci, Oi);
-	
 }

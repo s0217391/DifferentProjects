@@ -51,6 +51,7 @@ Shader "texturePj" "lipstick"
 
 Shader "texturePj" "fingerprints"
 	"string mapname" ["fingerprints.tex"]
+	"float stretchT" [0.5]
 ### Co=shader END
 
 
