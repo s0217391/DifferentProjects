@@ -45,24 +45,21 @@ surface glass(
 	}
 
 
-	color result = (kr * Cr) + (kt * Ct);
+	color result = (kr * Cr) + (0.9 * kt * Ct);
 	
-	Oi = 1;
-	
-	// Normal Check
-	//color test = color (normalize(N).V);
-	//Ci = test;
-	
+	Oi = 1;	
 	//Actual Color
 	Ci =  Ks * specular(Nn, V, rough) + result;
-
 	
 	//Ci = color noise(P);
 	
 	if(mapname != ""){
-		float ss = 4*s - 0.5;
-		float tt = 4*t - 3.5;
-		Ci += (1, 0.5, 0.5) * color texture(mapname, ss, tt);
+		float ss = 7*s - 1.5;
+		float tt = 2*t - 1.6;
+		if(ss > 0.1 && ss < 0.9 && tt > 0.1 && tt < 0.9){
+			color Ctex = color texture(mapname, ss, tt);
+			Ci = Ctex * Ci;
+		}
 	}
 	
 }

@@ -1,0 +1,138 @@
+# Scene for PJ's Rendering project
+# Should have a glass on a wooden table.
+Display "resultV1.tiff" "framebuffer" "rgba"
+
+# Generate Photon Map
+#Hider "photon" "emit" 1000000
+
+# Use Photon Map
+Attribute "photon" "causticmap" "caustic.cpm"
+Attribute "photon" "estimator" 200
+
+Projection "perspective"
+
+PixelSamples 1 1
+Rotate -90 1 0 0
+Translate 0 -3.5 -3.5
+
+WorldBegin
+# Making sure rays will be able to pass through the glass
+Attribute "trace" "int maxspeculardepth" [3]
+Attribute "visibility" "trace" [1]
+Attribute "visibility" "transmission" [1]
+
+Attribute "displacementbound" "sphere" [0.5]
+
+###Co shader defintion
+# TABLE
+Shader "texturePj" "woodtexture" 
+	"string mapname" ["wood.tex"] 
+	"float stretchS" [4]
+	"float stretchT" [4]
+	"float tiling" [1]
+Shader "cookTorrancePj" "tableHighLights"
+	"float Ks" [0.5]
+	"float F0" [0.95]
+	"float roughness" [0.2]
+	
+### Co=shader END
+
+
+# Environment - START
+AttributeBegin
+	Color [0.568 0.51 0.3]
+	Orientation "inside"
+	Sphere 100 -100 100 360
+AttributeEnd
+# Environment - END
+
+
+#Lighting - START	
+LightSource "shadowspot" "light2"
+			"from" [10 -10 5]
+			"to" [0 0 0]
+			"intensity" [100]
+			"string shadowname" [ "raytrace" ]
+			"coneangle" [0.5]
+			
+LightSource "ambientlight" "light1"
+			"intensity" [0.1]
+#Lighting - END
+
+# OBJECTS - START
+	
+# Simple Table - START
+AttributeBegin
+	Attribute "photon" "shadingmodel" "matte"
+	Color [0.55 0.27 0.07]
+	Surface "table"
+	Translate -5 0 0
+	Translate 0 0 0.49
+	Scale 50 50 1
+	Patch "bilinear" "P" [ -1 -1 0
+						    1 -1 0
+						   -1  1 0
+						    1  1 0 ]
+AttributeEnd
+# Simple Table - END
+
+# Glass - START
+AttributeBegin
+	Translate 0 0 2
+	Scale 1 1 0.4
+
+	Attribute "photon" "shadingmodel" "refractive:ior=1.5"
+	Color [1 1 1]
+	
+	Surface "insideGlass"
+	
+	AttributeBegin
+		Surface "outsideGlass"
+		# Hollow Part of Glass - outside
+		Cylinder 1 0.565 5 360 # CHECKED
+	AttributeEnd
+	
+	
+	# Hollow Part of Glass - inside
+	# This is the inside radius!!
+	AttributeBegin
+	Orientation "inside"
+	Cylinder 0.87 1.065 5 360 # CHECKED
+	AttributeEnd
+	
+	# Solid part of Glass (bottom)
+	# Cap both ends of Solid part
+	# Bottom
+	AttributeBegin
+	Orientation "inside"
+	Disk 0.5 0.935 360 # CHECKED
+	AttributeEnd
+	# Bottom Bevel
+	AttributeBegin
+	Translate 0 0 0.565
+	Torus 0.935 0.065 270 360 360 #CHECKED - outside
+	AttributeEnd
+	# Top
+	Disk 1 0.805 360 # this needs the radius of the inside!! # CHECKED
+	# Top Bevel
+	AttributeBegin
+	Translate 0 0 1.065
+	Orientation "inside"
+	Torus 0.805 0.065 270 360 360 #CHECKED - inside
+	AttributeEnd
+	
+	
+	
+	#Little pocket of air in the bottom
+	AttributeBegin
+	Translate 0 0 0.75
+	Orientation "inside"
+	Sphere 0.2 -1 1 360 #CHECKED
+	AttributeEnd
+	
+	# Edge of the glass. Needs outside and inside radius!!
+	Translate 0 0 5
+	Torus 0.935 0.065 0 180 360
+AttributeEnd
+# Glass - END
+WorldEnd
