@@ -1,15 +1,15 @@
 shader_obj 5.0 1 0
 cookTorrancePj 58 7 17 28 49 0 6 6 0 6 12 1
-9 145
+9 172
 rgb
 current
-/home/i7674211/DifferentProjects/Rendering/coshaders_cleanslate
+/Users/pieterjanbartels/Documents/MSCAVEF/DifferentProjects/Rendering/coshaders_cleanslate
 .:
 cookTorrancePj.sl
 surface
 
-$meta_1800
-$meta___PRMAN_RELEASE__1800
+$meta_1900
+$meta___PRMAN_RELEASE__1900
 7
 1
 0.200000003
@@ -158,22 +158,22 @@ _multiply 	3 76  4 36 4
 _divide 	3 79  4 36 4
 _multiply 	3 82  4 36 4
 min		4 85  4 36 4
-acos		2 89  4 38 4
-_multiply 	3 91  4 39 4
-_negate 	2 94  4 39 4
-_multiply 	3 96  4 39 4
-_divide 	3 99  4 39 4
-exp		2 102  4 39 4
-_multiply 	3 104  4 39 4
-_multiply 	3 107  4 42 4
-_multiply 	3 110  4 42 4
-_multiply 	3 113  4 42 4
-_divide 	3 116  4 42 4
-_scale		3 119  4 42 4
-_add		3 122  4 42 4
-_divide 	3 125  4 45 2
-_assign 	2 128  4 47 2
-_scale		3 130  4 48 2
-_multiply 	3 133  4 48 2
-_multiply 	3 136  4 48 2
+acos		2 89  4 39 4
+_multiply 	3 91  4 40 4
+_negate 	2 94  4 40 4
+_multiply 	3 96  4 40 4
+_divide 	3 99  4 40 4
+exp		2 102  4 40 4
+_multiply 	3 104  4 40 4
+_multiply 	3 107  4 43 4
+_multiply 	3 110  4 43 4
+_multiply 	3 113  4 43 4
+_divide 	3 116  4 43 4
+_scale		3 119  4 43 4
+_add		3 122  4 43 4
+_divide 	3 125  4 46 2
+_assign 	2 128  4 48 2
+_scale		3 130  4 49 2
+_multiply 	3 133  4 49 2
+_multiply 	3 136  4 49 2
 _enterproc 	1 139  4 12 1

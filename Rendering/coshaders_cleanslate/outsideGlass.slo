@@ -1,44 +1,83 @@
 shader_obj 5.0 1 0
-outsideGlass 16 3 11 1 4 0 0 0 0 0 13 1
-10 162
+outsideGlass 34 3 16 15 14 0 0 0 0 0 13 1
+11 196
 rgb
 current
-!!anyspace!!
-/home/i7674211/DifferentProjects/Rendering/coshaders_cleanslate
+/Users/pieterjanbartels/Documents/MSCAVEF/DifferentProjects/Rendering/coshaders_cleanslate
 .:
 outsideGlassShader.sl
+lipstick
+glassLayer
 surface
 
-$meta_1800
-$meta___PRMAN_RELEASE__1800
+$meta_1900
+$meta___PRMAN_RELEASE__1900
 3
-1
+0
 0
 1
 0
-16
-$meta___PRMAN_RELEASE__ 6 2 -1 8 3 0 0 0 0 0 0
-$meta___PRMAN_RELEASE_TAG__ 6 2 -1 9 3 0 0 0 0 0 0
+34
+$meta___PRMAN_RELEASE__ 6 2 -1 9 3 0 0 0 0 0 0
+$meta___PRMAN_RELEASE_TAG__ 6 2 -1 10 3 0 0 0 0 0 0
 $S0 6 2 -1 0 3 0 0 0 0 0 0
 $S2 6 2 -1 1 3 0 0 0 0 0 0
-$S6 6 2 -1 2 3 0 0 0 0 0 0
-$srcDir 6 2 -1 3 3 0 0 0 0 0 0
-$includePath 6 2 -1 4 3 0 0 0 0 0 0
-$S7 6 2 -1 5 3 0 0 0 0 1 4
-$S9 6 2 -1 6 3 0 0 1 1 0 0
-$CT0 3 2 -1 0 3 0 0 0 0 2 2
-$S10 6 2 -1 7 3 0 0 4 4 0 0
+$srcDir 6 2 -1 2 3 0 0 0 0 0 0
+$includePath 6 2 -1 3 3 0 0 0 0 0 0
+null 23 2 -1 0 3 0 0 0 0 4 8
+$S7 6 2 -1 4 3 0 0 0 0 1 14
+$S8 6 2 -1 5 3 0 0 0 0 2 2
+$C0 4 2 -1 2 3 0 0 0 0 3 3
+$S9 6 2 -1 6 3 0 0 0 0 7 7
+$S11 6 2 -1 7 3 0 0 1 1 6 10
+$S12 6 2 -1 8 3 0 0 14 14 0 0
 $result_surface 0 15 -1 0 3 0 0 0 0 0 0
-Os 3 10 0 0 2 0 0 0 0 3 3
-Oi 3 10 0 0 2 0 0 3 3 0 0
-Ci 3 10 0 0 2 0 0 2 2 0 0
-surface 13 8 -1 0 2 1 11 0 0 0 4
-6
-8 
-14 9 
-13 12 
-10 
-_enterproc 	1 0  5 1 1
-_assign 	2 1  5 3 2
-_assign 	2 3  5 4 2
-_enterproc 	1 5  5 1 1
+Oi 3 10 0 0 2 0 0 10 10 10 13
+Ci 3 10 0 0 2 0 0 10 13 10 11
+$2_lipstick 23 3 -1 0 3 0 0 2 2 4 6
+$2_lipCol 3 3 0 0 2 0 0 3 6 6 12
+$2_lipO 3 3 0 0 2 0 0 6 6 6 6
+$2_glass 23 3 -1 0 3 0 0 7 7 8 10
+surface 13 8 -1 0 2 1 13 0 0 0 14
+$T0 11 4 -1 0 3 0 0 4 10 5 10
+$Code0 9 8 -1 0 2 0 0 0 0 5 6
+$Code1 9 8 -1 0 2 0 0 0 0 7 7
+$Code2 9 8 -1 0 2 0 0 0 0 5 5
+$Cond0 10 11 -1 0 2 0 0 5 6 5 6
+$T1 0 4 -1 0 1 0 0 6 6 0 0
+$Code3 9 8 -1 0 2 0 0 0 0 9 10
+$Code4 9 8 -1 0 2 0 0 0 0 11 11
+$Code5 9 8 -1 0 2 0 0 0 0 9 9
+$Cond1 10 11 -1 0 2 0 0 9 10 9 10
+$T3 0 4 -1 0 1 0 0 10 10 0 0
+$T4 3 4 0 0 2 0 0 11 11 12 12
+$T5 3 4 0 0 2 0 0 12 12 13 13
+43
+11 
+16 8 
+17 9 
+21 16 6 
+21 24 22 23 25 
+26 16 11 17 18 
+19 10 
+21 19 6 
+21 29 27 28 30 
+31 19 11 15 14 
+32 15 17 
+33 32 17 
+15 33 14 
+12 
+_enterproc 	1 0  4 1 1
+getshader 	2 1  4 3 2
+_assign 	2 3  4 5 2
+_ne		3 5  4 7 2
+_if		5 8  4 7 2
+_methodcall 	5 13  4 8 2
+getshader 	2 18  4 10 2
+_ne		3 20  4 12 2
+_if		5 23  4 12 2
+_methodcall 	5 28  4 13 2
+_multiply 	3 33  4 15 2
+_multiply 	3 36  4 15 2
+_multiply 	3 39  4 15 2
+_enterproc 	1 42  4 1 1

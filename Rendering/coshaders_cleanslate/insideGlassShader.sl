@@ -1,5 +1,9 @@
 surface insideGlass()
 {
-	Ci = (0, 0, 1);
-	Oi = Os;
+	
+	shader glass = getshader("glassLayer");
+	
+	if(glass != null)
+		glass->surface(Ci, Oi);
+	
 }

@@ -18,13 +18,19 @@ class texturePj(string mapname = "";
 			float ss = stretchS * s - offsetS;
 			float tt = stretchT * t - offsetT;
 			
-			if(tiling > 0) 
-			{
-				ss = mod(ss, 1);
-				tt = mod(tt, 1);
+			float ss_m = mod(ss, 1);
+			float tt_m = mod(tt, 1);
+			
+			Ctex = color texture(mapname, ss_m, tt_m);
+			
+			if(tiling < 0.5){
+				//These borders are specific for my project: 
+				// 		They assume the texture of interest is in the center of the image
+				//		Avoids artifacts at the borders.
+				if(ss < 0.1 || ss > 0.9 || tt < 0.1 || tt > 0.9) Ctex = 1;
 			}
 			
-			Ctex = color texture(mapname, ss, tt);
+
 		
 		} 
 		

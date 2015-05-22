@@ -11,13 +11,13 @@ Attribute "photon" "estimator" 200
 
 Projection "perspective"
 
-PixelSamples 1 1
+PixelSamples 3 3
 Rotate -90 1 0 0
-Translate 0 -3.5 -3.5
+Translate 0  -2.5 -2.5
 
 WorldBegin
 # Making sure rays will be able to pass through the glass
-Attribute "trace" "int maxspeculardepth" [3]
+Attribute "trace" "int maxspeculardepth" [5]
 Attribute "visibility" "trace" [1]
 Attribute "visibility" "transmission" [1]
 
@@ -30,11 +30,27 @@ Shader "texturePj" "woodtexture"
 	"float stretchS" [4]
 	"float stretchT" [4]
 	"float tiling" [1]
+	
 Shader "cookTorrancePj" "tableHighLights"
 	"float Ks" [0.5]
 	"float F0" [0.95]
 	"float roughness" [0.2]
 	
+# GLASS
+Shader "glassPj" "glassLayer"
+	"float ior" [1.5]
+	
+# OUTSIDE GLASS
+Shader "texturePj" "lipstick"
+	"string mapname" ["ls_original.tex"]
+	"float stretchS" [7]
+	"float stretchT" [2]
+	"float offsetS" [1.5]
+	"float offsetT" [1.6]
+	"float tiling" [0]
+
+Shader "texturePj" "fingerprints"
+	"string mapname" ["fingerprints.tex"]
 ### Co=shader END
 
 
@@ -78,7 +94,7 @@ AttributeEnd
 
 # Glass - START
 AttributeBegin
-	Translate 0 0 2
+	Translate 0 0 1
 	Scale 1 1 0.4
 
 	Attribute "photon" "shadingmodel" "refractive:ior=1.5"
@@ -88,6 +104,7 @@ AttributeBegin
 	
 	AttributeBegin
 		Surface "outsideGlass"
+		Displacement "pattern"
 		# Hollow Part of Glass - outside
 		Cylinder 1 0.565 5 360 # CHECKED
 	AttributeEnd

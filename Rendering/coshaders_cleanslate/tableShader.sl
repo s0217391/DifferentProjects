@@ -1,5 +1,6 @@
 surface table(
 	float Kd = 1;
+	float Ka = 1;
 )
 {
 
@@ -18,7 +19,7 @@ surface table(
 		tableHL->surface(HLCol, HLOp);
 	
 	Oi = woodOp * HLOp;
-	Ci = Kd * woodCol * diffuse(NN);
+	Ci = Kd * woodCol * diffuse(NN) + Ka * ambient() * woodCol;
 	Ci += HLCol;
 	
 	Ci *= Oi;

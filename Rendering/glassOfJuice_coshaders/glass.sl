@@ -39,7 +39,7 @@ public void surface (output color Ci, Oi)
 	}
 
 
-	color result = (kr * Cr) + (0.9 * kt * Ct);
+	color result = (kr * Cr) + (kt * Ct);
 	
 	Oi = Os;	
 	//Actual Color
