@@ -1,0 +1,106 @@
+# Scene for PJ's Rendering project's caustic map
+
+# Generate Photon Map
+Hider "photon" "emit" 10000000
+
+# Use Photon Map
+Attribute "photon" "causticmap" "caustic.cpm"
+
+WorldBegin
+# Making sure rays will be able to pass through the glass
+# The raydepth is limited in the glass shader!!
+Attribute "trace" "int maxspeculardepth" [10]
+Attribute "visibility" "trace" [1]
+Attribute "visibility" "transmission" [1]
+
+Attribute "displacementbound" "sphere" [0.5]
+
+
+#Lighting - START	
+LightSource "pointlight" "backlight"
+			"from" [4.0 -4.0 2]
+			"intensity" [10]
+			
+LightSource "pointlight" "frontlight"
+			"from" [4.0 4.0 3]
+			"intensity" [14]
+#Lighting - END
+
+# OBJECTS - START
+	
+# Simple Table - START
+AttributeBegin
+	Attribute "photon" "shadingmodel" "dielectric"
+	Color [0.55 0.27 0.07]
+	Translate -5 0 0
+	Translate 0 0 0.49
+	Scale 50 50 1
+	Patch "bilinear" "P" [ -1 -1 0
+						    1 -1 0
+						   -1  1 0
+						    1  1 0 ]
+AttributeEnd
+# Simple Table - END
+
+
+# Glass - START
+AttributeBegin
+	Translate 0 0 0.35
+	Scale 1 1 0.4
+
+	Attribute "photon" "shadingmodel" "glass"
+	Color [1 1 1]
+	
+	Displacement "onlyNoiseDisp"
+	#Surface "insideGlass"
+	
+	AttributeBegin
+		#Surface "outsideGlass"
+		Displacement "pattern"
+		# Hollow Part of Glass - outside
+		Cylinder 1 0.565 5 360 # CHECKED
+	AttributeEnd
+	
+	# Hollow Part of Glass - inside
+	# This is the inside radius!!
+	AttributeBegin
+	Orientation "inside"
+	Cylinder 0.95 1.065 5 360 # CHECKED
+	AttributeEnd
+	
+	# Solid part of Glass (bottom)
+	# Cap both ends of Solid part
+	# Bottom
+	AttributeBegin
+	Orientation "inside"
+	Disk 0.5 0.935 360 # CHECKED
+	AttributeEnd
+	# Bottom Bevel
+	AttributeBegin
+	Translate 0 0 0.565
+	Torus 0.935 0.065 270 360 360 #CHECKED - outside
+	AttributeEnd
+	# Top
+	Disk 1 0.88 360 # this needs the radius of the inside!! # CHECKED
+	# Top Bevel
+	AttributeBegin
+	Translate 0 0 1.065
+	Orientation "inside"
+	Torus 0.88 0.065 270 360 360 #CHECKED - inside
+	AttributeEnd
+	
+	
+	
+	#Little pocket of air in the bottom
+	AttributeBegin
+	Translate 0 0 0.75
+	Orientation "inside"
+	Sphere 0.2 -1 1 360 #CHECKED
+	AttributeEnd
+	
+	# Edge of the glass. Needs outside and inside radius!!
+	Translate 0 0 5
+	Torus 0.975 0.025 0 180 360
+AttributeEnd
+# Glass - END
+WorldEnd

@@ -5,40 +5,53 @@ import Agent as a
 import Simulator as s
 import cv
 
-def setup(dd, behavID, preyStart, hunterStart):
+def setup(dd, behavID, preyStart, hunter1Start, hunter2Start):
 	sim = s.AgentSimulation()
 	preyBehav = a.runAwayBehaviour(distanceTrapped = -1.0, distanceDanger = dd)
-	basepath = "/home/i7674211/DifferentProjects/PI_code/simulator/behaviourGeneration/firstGenScripts/behav"
-	rndmBehav = a.scriptedBehaviour(basepath + str(behavID) + ".py")
-	prey = a.Agent(maxVelocity = 1.0, startPos = preyStart, drag = 1, behav = preyBehav)
-	hunter = a.Agent(behav = rndmBehav, startPos = hunterStart)
+	basepath = "/home/i7674211/DifferentProjects/PI_code/simulator/behaviourGeneration/group/behav"
+	huntBehav1 = a.scriptedBehaviour(basepath + str(behavID) + ".py")
+	huntBehav2 = a.scriptedBehaviour(basepath + str(behavID) + ".py")
+
+	prey = a.Agent(maxVelocity = 2.0, startPos = preyStart, drag = 0.1, behav = preyBehav)
+	hunter1 = a.Agent(behav = huntBehav1, startPos = hunter1Start)
+	hunter2 = a.Agent(behav = huntBehav2, startPos = hunter2Start)	
+
 	sim.addAgent(prey)
-	sim.addAgent(hunter)
+	sim.addAgent(hunter1)
+	sim.addAgent(hunter2)
 	return sim
 
 def convertPosition(pos):
 	x = pos[0]
 	y = pos[1]
-	x = int(25 * x + 250)
-	y = int(25 * y + 250)
+	x = int(15 * x + 250)
+	y = int(15 * y + 250)
 	return (x, y)
 	
 
-def drawPositions(dd, positions = [], saveImage = False, filename = ''):
+def drawPositions(dd, sim, saveImage = False, filename = ''):
+	positions = sim.getPositions()
+
 	blank = cv.CreateMat(500, 500, cv.CV_8UC3)
 	cv.AddS(blank, (255, 255, 255), blank)
-	cv.Circle(blank, convertPosition(positions[0]), 5, (255, 0, 0), thickness = -1)
-	cv.Circle(blank, convertPosition(positions[0]), int(25.0 * dd), (255, 0, 0), thickness = 1)
-	for i in positions[1:]:
-		cv.Circle(blank, convertPosition(i), 5, (0, 0, 255), thickness = -1)
+	
+	preyColor = (255, 0, 0)
+	if sim.agents[0].energy <= 0: preyColor = (0, 255, 0)	
+	
+	cv.Circle(blank, convertPosition(positions[0]), 5, preyColor, thickness = -1)
+	cv.Circle(blank, convertPosition(positions[0]), int(15.0 * dd), preyColor, thickness = 1)
+	for i in (1, len(positions) - 1):
+		hunterColor = (0, 0, 255)
+		if sim.agents[i].energy <= 0: hunterColor = (0, 255, 0)
+		cv.Circle(blank, convertPosition(positions[i]), 5, hunterColor, thickness = -1)
 	cv.ShowImage("sim", blank)
 	if saveImage:
 		cv.SaveImage(filename, blank)
 	cv.WaitKey(40)
 
 preyPos = [[ 9,  3], [-6, -6], [5,  5], [-7, -6]]
-huntPos = [[-8, -2], [ 6,  6], [5, -5], [ 7, -6]]
-
+huntPos1 = [[-8, -2], [ 6,  6], [5, -5], [ 7, -6]]
+huntPos2 = [[-2, -8], [ 6,  -6], [-5, 5], [ -7, 6]]
 """
 def main(argv=None):
 	dd = 2
@@ -46,28 +59,29 @@ def main(argv=None):
 	for j in range(1, 501):
 		f.write(str(j))
 		for test in range(len(preyPos)):
-			sim = setup(dd, behavID = j, preyStart = np.array(preyPos[test]), hunterStart = np.array(huntPos[test]))
-			startDistance = np.linalg.norm(np.array(preyPos[test]) - np.array(huntPos[test]))
+			sim = setup(dd, behavID = j, preyStart = np.array(preyPos[test]), hunter1Start = np.array(huntPos1[test]), hunter2Start = np.array(huntPos2[test]))
+			'startDistance = np.linalg.norm(np.array(preyPos[test]) - np.array(huntPos[test]))'
 			steps = 200
-			averageDistance = 0
+			'averageDistance = 0'
+			pos = 0
 			for i in range(steps):
 				sim.update()
-				pos = sim.getPositions()
-				averageDistance += np.linalg.norm(pos[0] - pos[1])
-				#drawPositions(dd, pos)
-			averageDistance = averageDistance / (steps * startDistance)
-			f.write(" : " + str(averageDistance))
+				'averageDistance += np.linalg.norm(pos[0] - pos[1])'
+				#drawPositions(dd, sim)
+			'averageDistance = averageDistance / (steps * startDistance)'
+			energyLevel = float(sim.agents[0].energy + 1) / float(sim.agents[1].energy + sim.agents[2].energy + 1)
+			energyLevel *= min(np.linalg.norm(pos[0] - pos[1]), np.linalg.norm(pos[0] - pos[2]))
+			f.write(" : " + str(energyLevel))
 		f.write('\n')
 """
 def main(argv=None):
-	dd = 2
+	dd = 3.5
 	for test in range(len(preyPos)):
-		sim = setup(dd, behavID = 41, preyStart = np.array(preyPos[test]), hunterStart = np.array(huntPos[test]))
-		steps = 200
+		sim = setup(dd, behavID = 195, preyStart = np.array(preyPos[test]), hunter1Start = np.array(huntPos1[test]), hunter2Start = np.array(huntPos2[test]))
+		steps = 300
 		for i in range(steps):
 				sim.update()
-				pos = sim.getPositions()
-				drawPositions(dd, pos, saveImage = True, filename='outpic/frame' + str(test) + "_" + str(i) + ".png")
-			
+				drawPositions(dd, sim, saveImage = True, filename='outpic/frame' + str(test) + "_" + str(i) + ".png")
+
 if __name__ == "__main__":
 	sys.exit(main())

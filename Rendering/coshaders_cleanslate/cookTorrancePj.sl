@@ -45,7 +45,7 @@ class cookTorrancePj(
 		
 		cook = cook/PI;
 		
-		Oi = Os;
-		Ci = Ks * specularColor * cook * Oi;
+		Oi = 1;
+		Ci = Ks * specularColor * cook;
 	}
 }

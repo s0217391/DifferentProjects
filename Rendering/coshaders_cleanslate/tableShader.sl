@@ -18,9 +18,17 @@ surface table(
 	if(tableHL != null)
 		tableHL->surface(HLCol, HLOp);
 	
-	Oi = woodOp * HLOp;
+	shader caustic = getshader("tableCaustic");
+	
+	color causCol, causOp;
+	if(caustic != null)
+		caustic->surface(causCol, causOp);
+		
+	Oi = Os * HLOp * woodOp * causOp;
+	
 	Ci = Kd * woodCol * diffuse(NN) + Ka * ambient() * woodCol;
 	Ci += HLCol;
+	Ci += causCol;
 	
 	Ci *= Oi;
 }

@@ -1,23 +1,36 @@
 # Scene for PJ's Rendering project
-# Should have a glass on a wooden table.
-Display "resultV1.tiff" "framebuffer" "rgba"
+# Glass on a wooden table.
+Display "resultV1.tiff" "framebuffer" "rgb"
 
-# Generate Photon Map
-#Hider "photon" "emit" 1000000
+Format 1280 720 1
 
 # Use Photon Map
 Attribute "photon" "causticmap" "caustic.cpm"
-Attribute "photon" "estimator" 200
+Attribute "photon" "estimator" 50
 
 Projection "perspective"
+#DepthOfField 22 3 2.6
 
-PixelSamples 3 3
+PixelSamples 1 1
+ShadingRate 1
+# keep this for rendering the result
+Translate 0 0 2.5
+Rotate 180 0 1 0
 Rotate -90 1 0 0
-Translate 0  -2.5 -2.5
+Translate 0 -2.5 -2.25
+# This looks pretty good
+
+
+
+#Translate 0 -1 1
+#Rotate -25 1 0 0
+#Rotate -90 1 0 0
+#Translate 0 -2.5 -2.5
 
 WorldBegin
 # Making sure rays will be able to pass through the glass
-Attribute "trace" "int maxspeculardepth" [5]
+# The raydepth is limited in the glass shader!!
+Attribute "trace" "int maxspeculardepth" [10]
 Attribute "visibility" "trace" [1]
 Attribute "visibility" "transmission" [1]
 
@@ -27,8 +40,8 @@ Attribute "displacementbound" "sphere" [0.5]
 # TABLE
 Shader "texturePj" "woodtexture" 
 	"string mapname" ["wood.tex"] 
-	"float stretchS" [4]
-	"float stretchT" [4]
+	"float stretchS" [3]
+	"float stretchT" [3]
 	"float tiling" [1]
 	
 Shader "cookTorrancePj" "tableHighLights"
@@ -36,16 +49,22 @@ Shader "cookTorrancePj" "tableHighLights"
 	"float F0" [0.95]
 	"float roughness" [0.2]
 	
+Shader "causticPj" "tableCaustic"
+	
 # GLASS
 Shader "glassPj" "glassLayer"
 	"float ior" [1.5]
+	"maxdepth" [2]
+	"float Kr" [1]
+	
+Shader "noiseDisp" "noiseD"
 	
 # OUTSIDE GLASS
 Shader "texturePj" "lipstick"
 	"string mapname" ["ls_original.tex"]
 	"float stretchS" [7]
 	"float stretchT" [2]
-	"float offsetS" [1.5]
+	"float offsetS" [1.75]
 	"float offsetT" [1.6]
 	"float tiling" [0]
 
@@ -59,28 +78,34 @@ Shader "texturePj" "fingerprints"
 AttributeBegin
 	Color [0.568 0.51 0.3]
 	Orientation "inside"
-	Sphere 100 -100 100 360
+	#Sphere 100 -100 100 360
 AttributeEnd
 # Environment - END
 
 
 #Lighting - START	
-LightSource "shadowspot" "light2"
+LightSource "shadowspot" "backlight"
 			"from" [10 -10 5]
+			"to" [0 0 0]
+			"intensity" [50]
+			"string shadowname" [ "raytrace" ]
+			"coneangle" [0.5]
+			
+LightSource "shadowspot" "frontlight"
+			"from" [10 10 7.5]
 			"to" [0 0 0]
 			"intensity" [100]
 			"string shadowname" [ "raytrace" ]
 			"coneangle" [0.5]
 			
 LightSource "ambientlight" "light1"
-			"intensity" [0.1]
+			"intensity" [0.75]
 #Lighting - END
 
 # OBJECTS - START
 	
 # Simple Table - START
 AttributeBegin
-	Attribute "photon" "shadingmodel" "matte"
 	Color [0.55 0.27 0.07]
 	Surface "table"
 	Translate -5 0 0
@@ -93,14 +118,14 @@ AttributeBegin
 AttributeEnd
 # Simple Table - END
 
+
 # Glass - START
 AttributeBegin
-	Translate 0 0 1
+	Translate 0 0 0.35
 	Scale 1 1 0.4
-
-	Attribute "photon" "shadingmodel" "refractive:ior=1.5"
 	Color [1 1 1]
 	
+	Displacement "onlyNoiseDisp"
 	Surface "insideGlass"
 	
 	AttributeBegin
@@ -110,12 +135,11 @@ AttributeBegin
 		Cylinder 1 0.565 5 360 # CHECKED
 	AttributeEnd
 	
-	
 	# Hollow Part of Glass - inside
 	# This is the inside radius!!
 	AttributeBegin
 	Orientation "inside"
-	Cylinder 0.87 1.065 5 360 # CHECKED
+	Cylinder 0.95 1.065 5 360 # CHECKED
 	AttributeEnd
 	
 	# Solid part of Glass (bottom)
@@ -131,12 +155,12 @@ AttributeBegin
 	Torus 0.935 0.065 270 360 360 #CHECKED - outside
 	AttributeEnd
 	# Top
-	Disk 1 0.805 360 # this needs the radius of the inside!! # CHECKED
+	Disk 1 0.88 360 # this needs the radius of the inside!! # CHECKED
 	# Top Bevel
 	AttributeBegin
 	Translate 0 0 1.065
 	Orientation "inside"
-	Torus 0.805 0.065 270 360 360 #CHECKED - inside
+	Torus 0.88 0.065 270 360 360 #CHECKED - inside
 	AttributeEnd
 	
 	
@@ -150,7 +174,7 @@ AttributeBegin
 	
 	# Edge of the glass. Needs outside and inside radius!!
 	Translate 0 0 5
-	Torus 0.935 0.065 0 180 360
+	Torus 0.975 0.025 0 180 360
 AttributeEnd
 # Glass - END
 WorldEnd

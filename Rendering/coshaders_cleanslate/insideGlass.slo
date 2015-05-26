@@ -1,16 +1,16 @@
 shader_obj 5.0 1 0
 insideGlass 22 2 13 6 6 0 0 0 0 0 13 1
-10 186
+10 159
 rgb
 current
-/Users/pieterjanbartels/Documents/MSCAVEF/DifferentProjects/Rendering/coshaders_cleanslate
+/home/i7674211/DifferentProjects/Rendering/coshaders_cleanslate
 .:
 insideGlassShader.sl
 glassLayer
 surface
 
-$meta_1900
-$meta___PRMAN_RELEASE__1900
+$meta_1800
+$meta___PRMAN_RELEASE__1800
 2
 0
 0

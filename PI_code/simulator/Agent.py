@@ -8,7 +8,7 @@ class Agent:
 	'Class representing an agent'
 	ID_base = 0
 	
-	def __init__(self, behav, maxVelocity = 1.0, drag = 0.05,startPos = np.array([0.0, 0.0]), startVel = np.array([0.0, 0.0]), timestep = 1.0/25.0):
+	def __init__(self, behav, maxVelocity = 2.0, drag = 0.5,startPos = np.array([0.0, 0.0]), startVel = np.array([0.0, 0.0]), timestep = 1.0/25.0, energ = 25):
 		Agent.ID_base += 1
 		self.ID = Agent.ID_base
 		self.pos = startPos
@@ -18,9 +18,12 @@ class Agent:
 		self.timestep = timestep
 		self.maxVel = maxVelocity
 		self.dragCoef = drag
+		self.energy = energ
+		self.distanceTravelled = 0
 		
 	def updateAgent(self, agents):
-		force = self.behavior.compute(self, agents)
+		force = 10 * self.behavior.compute(self, agents)
+		if self.energy <= 0: force *= 0
 		drag = -1.0 * self.dragCoef * self.vel
 		force = force + drag
 		self.vel = self.vel + self.timestep * (force / self.mass)
@@ -55,6 +58,7 @@ class runAwayBehaviour(Behaviour):
 				trapped = True
 			elif distToA < self.thresDanger:
 				awayDirection += (aself.pos - a.pos)
+				aself.energy = max(0, aself.energy - 1)
 		dirnorm = np.sqrt(np.dot(awayDirection, awayDirection))
 		if trapped: 
 			return np.array([0, 0])
@@ -75,14 +79,30 @@ class scriptedBehaviour(Behaviour):
 		self.scriptModule = imp.load_source("scriptedBehav", module)
 		
 	def compute(self, aself, agents):
-		other = 0
-		if aself.ID == agents[0].ID: 
-			other = 1
-		otherAgent = agents[other]
-		relativePos = otherAgent.pos - aself.pos
-		inpArray = [relativePos[0], relativePos[1]]
-		force = self.scriptModule.compute(inpArray)
+		other = 1
+		if aself.ID == agents[1].ID: 
+			other = 2
+
+		prey = agents[0]
+		otherHunter = agents[other]
+
+		relativePosPrey = prey.pos - aself.pos
+		relativePosHunter = otherHunter.pos - aself.pos
+
+		relatPreyOther = prey.pos - otherHunter.pos
+		
+		'distance between prey & other hunter'
+		dist = np.linalg.norm(relatPreyOther)
+
+		preyArr = [relativePosPrey[0], relativePosPrey[1]]
+		otherHunterArr = [relativePosHunter[0], relativePosHunter[1]]
+		force = self.scriptModule.compute(preyArr, otherHunterArr, dist)
 		result = np.array(force)
+		
+		distToPrey = np.linalg.norm(relativePosPrey)
+		if distToPrey < 3.5: 
+			aself.energy = max(0, aself.energy - 1)
+
 		return result
 	
 			

@@ -20,6 +20,11 @@ displacement pattern (
 	mag = triangleWave(s, 0.025) * triangleWave(t, 0.075);
 	mag /= length(vtransform("object", NN));
 	
+	shader noiseDisp = getshader("noiseD");
+	
+	if(noiseDisp != null)
+		noiseDisp->displacement(P, N);
+	
 	float switch = smoothstep(0, 0.05, t) * (1 - smoothstep(0.72, 0.77, t));
 	
 	
